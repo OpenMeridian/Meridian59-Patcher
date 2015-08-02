@@ -28,11 +28,13 @@ namespace ClientPatcher
         public void Refresh()
         {
             LoadSettings();
-            GetNewSettings();
+            MergeWebSettings(GetNewSettings());
             SaveSettings();
         }
-
-        public void GetNewSettings()
+        /// <summary>
+        /// Downloads the list of available servers from the open meridian web server using JSON encoded PatcherSettings objects.
+        /// </summary>
+        public List<PatcherSettings> GetNewSettings()
         {
             try
             {
@@ -41,32 +43,44 @@ namespace ClientPatcher
                 //Download the settings from the web, store them in a list.
                 var webSettingsList =
                     JsonConvert.DeserializeObject<List<PatcherSettings>>(myClient.DownloadString(SettingsUrl)); 
-
-                foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
-                {
-                    //find the matching local profile by Guid
-                    PatcherSettings localProfile = Servers.FirstOrDefault(i => i.Guid == webProfile.Guid);
-                    //if a local match, update, else, add a new local profile
-                    if (localProfile != null) 
-                    {
-                        localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
-                        localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
-                        localProfile.ServerName = webProfile.ServerName;
-                        localProfile.FullInstallUrl = webProfile.FullInstallUrl;
-                        localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
-                    }
-                    else
-                    {
-                        Servers.Add(webProfile);
-                    }
-                }
+                return webSettingsList;
+                
             }
             catch (Exception e)
             {
                 throw new InvalidOperationException("Unable to download settings from server." + e);
             }         
         }
-
+        /// <summary>
+        /// Merges a list of PatcherSettings objects with the currently loaded settings
+        /// </summary>
+        /// <param name="webSettingsList">List of PatcherSetting objects to merge</param>
+        public void MergeWebSettings(List<PatcherSettings> webSettingsList )
+        {
+            foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
+            {
+                //find the matching local profile by Guid
+                PatcherSettings localProfile = Servers.FirstOrDefault(i => i.Guid == webProfile.Guid);
+                //if a local match, update, else, add a new local profile
+                if (localProfile != null)
+                {
+                    //dont update all fields on purpose. user retains control of paths, which client to use.
+                    localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
+                    localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
+                    localProfile.ServerName = webProfile.ServerName;
+                    localProfile.FullInstallUrl = webProfile.FullInstallUrl;
+                    localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+                }
+                else
+                {
+                    Servers.Add(webProfile);
+                }
+            }
+        }
+        /// <summary>
+        /// Load the settings.txt file and use json deserialization to create an array of PatcherSettings objects.
+        /// Otherwise, download the settings from the web.
+        /// </summary>
         public void LoadSettings()
         {
             if (File.Exists(_settingsPath + _settingsFile))
@@ -78,14 +92,13 @@ namespace ClientPatcher
             }
             else
             {
-                Servers = new List<PatcherSettings>();
-                Servers.Add(new PatcherSettings(103)); //default entries, with "templates" defined in the class
-                Servers.Add(new PatcherSettings(104));
-                Servers.Add(new PatcherSettings(1));
+                Servers = GetNewSettings();
                 GrantAccess();
             }
         }
-
+        /// <summary>
+        /// JSON Serialize our PatcherSettings and write them to settings.txt
+        /// </summary>
         public void SaveSettings()
         {
             try
@@ -117,7 +130,7 @@ namespace ClientPatcher
             };
             if (isdefault)
             {
-                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default == true))
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default))
                 {
                     patcherSettingse.Default = false;
                 }
@@ -130,7 +143,7 @@ namespace ClientPatcher
         {
             if (newprofile.Default)
             {
-                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default == true))
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default))
                 {
                     patcherSettingse.Default = false;
                 }
@@ -149,7 +162,9 @@ namespace ClientPatcher
         {
             return Servers.Find(x => x.Default);
         }
-
+        /// <summary>
+        /// Sets proper NTFS permissions for the patcher to operate
+        /// </summary>
         private void GrantAccess()
         {
             try
