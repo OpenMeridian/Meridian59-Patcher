@@ -5,9 +5,6 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
-using System.Deployment;
-using System.Drawing;
-using System.Reflection;
 
 namespace ClientPatcher
 {
@@ -25,7 +22,7 @@ namespace ClientPatcher
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
 
-        public bool ShowFileNames = false;
+        public bool ShowFileNames;
 
         public ClientPatchForm()
         {
@@ -63,7 +60,7 @@ namespace ClientPatcher
 
         void CheckForShortcut()
         {
-            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            if (ApplicationDeployment.IsNetworkDeployed)
             {
                 ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
                 if (ad.IsFirstRun)  //first time user has run the app
@@ -71,12 +68,10 @@ namespace ClientPatcher
                     string company = "OpenMeridian";
                     string description = "Open Meridian Patch and Client Management";
 
-                    string desktopPath = string.Empty;
-                    desktopPath =
+                    string desktopPath =
                         string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                         "\\", description, ".appref-ms");
-                    string shortcutName = string.Empty;
-                    shortcutName =
+                    string shortcutName =
                         string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
                         "\\", company, "\\", description, ".appref-ms");
                     System.IO.File.Copy(shortcutName, desktopPath, true);
@@ -362,7 +357,7 @@ namespace ClientPatcher
             _patcher.GenerateCache();
         }
 
-        private bool _creatingAccount = false;
+        private bool _creatingAccount;
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {

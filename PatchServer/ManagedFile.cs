@@ -18,7 +18,7 @@ namespace PatchListGenerator
         public string Basepath = "\\";
         public string Filename { get; set; } //whatever.roo
         public string MyHash { get; set; } //what is the hash of this file
-        public long Length = 0;
+        public long Length;
 
         public ManagedFile()
         {
