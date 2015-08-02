@@ -91,13 +91,16 @@ namespace ClientPatcher
             var meridian = new ProcessStartInfo
             {
                 FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
-                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\"
+                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\",
+                
                 //TODO: add ability to enter username and password during patching
                 //meridian.Arguments = "/U:username /P:password /H:host";
             };
 
             Process.Start(meridian);
             Application.Exit();
+            webControl.Dispose();
+            Environment.Exit(1);
         }
         private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
