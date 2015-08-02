@@ -36,8 +36,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnCacheGen = new System.Windows.Forms.Button();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
+            this.cbUseOgreClient = new System.Windows.Forms.CheckBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -49,9 +49,6 @@
             this.txtClientFolder = new System.Windows.Forms.TextBox();
             this.txtPatchInfoURL = new System.Windows.Forms.TextBox();
             this.txtServerName = new System.Windows.Forms.TextBox();
-            this.btnStartModify = new System.Windows.Forms.Button();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.pbFileProgress = new System.Windows.Forms.ProgressBar();
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
@@ -61,7 +58,13 @@
             this.webControl = new Awesomium.Windows.Forms.WebControl(this.components);
             this.tabLog = new System.Windows.Forms.TabPage();
             this.tabOptions = new System.Windows.Forms.TabPage();
+            this.btnStartModify = new System.Windows.Forms.Button();
+            this.btnRemove = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnCacheGen = new System.Windows.Forms.Button();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -126,18 +129,11 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Update/Install";
             // 
-            // btnCacheGen
-            // 
-            this.btnCacheGen.Location = new System.Drawing.Point(405, 10);
-            this.btnCacheGen.Name = "btnCacheGen";
-            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
-            this.btnCacheGen.TabIndex = 15;
-            this.btnCacheGen.Text = "Verify All Files";
-            this.btnCacheGen.UseVisualStyleBackColor = true;
-            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
-            // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.Controls.Add(this.label1);
+            this.groupProfileSettings.Controls.Add(this.btnCacheGen);
+            this.groupProfileSettings.Controls.Add(this.cbUseOgreClient);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
             this.groupProfileSettings.Controls.Add(this.btnSave);
             this.groupProfileSettings.Controls.Add(this.label8);
@@ -150,16 +146,26 @@
             this.groupProfileSettings.Controls.Add(this.txtPatchInfoURL);
             this.groupProfileSettings.Controls.Add(this.txtServerName);
             this.groupProfileSettings.Enabled = false;
-            this.groupProfileSettings.Location = new System.Drawing.Point(6, 91);
+            this.groupProfileSettings.Location = new System.Drawing.Point(6, 7);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(504, 200);
+            this.groupProfileSettings.Size = new System.Drawing.Size(605, 277);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
+            // cbUseOgreClient
+            // 
+            this.cbUseOgreClient.AutoSize = true;
+            this.cbUseOgreClient.Location = new System.Drawing.Point(6, 198);
+            this.cbUseOgreClient.Name = "cbUseOgreClient";
+            this.cbUseOgreClient.Size = new System.Drawing.Size(183, 17);
+            this.cbUseOgreClient.TabIndex = 23;
+            this.cbUseOgreClient.Text = "Use .NET (Ogre3d) Client BETA?";
+            this.cbUseOgreClient.UseVisualStyleBackColor = true;
+            // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(399, 109);
+            this.btnBrowse.Location = new System.Drawing.Point(502, 110);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(97, 20);
             this.btnBrowse.TabIndex = 22;
@@ -169,11 +175,11 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(120, 175);
+            this.btnSave.Location = new System.Drawing.Point(331, 175);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(91, 19);
+            this.btnSave.Size = new System.Drawing.Size(268, 51);
             this.btnSave.TabIndex = 21;
-            this.btnSave.Text = "Save Profile";
+            this.btnSave.Text = "Save Changes";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -216,7 +222,7 @@
             // cbDefaultServer
             // 
             this.cbDefaultServer.AutoSize = true;
-            this.cbDefaultServer.Location = new System.Drawing.Point(14, 175);
+            this.cbDefaultServer.Location = new System.Drawing.Point(6, 175);
             this.cbDefaultServer.Name = "cbDefaultServer";
             this.cbDefaultServer.Size = new System.Drawing.Size(100, 17);
             this.cbDefaultServer.TabIndex = 16;
@@ -227,59 +233,29 @@
             // 
             this.txtPatchBaseURL.Location = new System.Drawing.Point(6, 149);
             this.txtPatchBaseURL.Name = "txtPatchBaseURL";
-            this.txtPatchBaseURL.Size = new System.Drawing.Size(382, 20);
+            this.txtPatchBaseURL.Size = new System.Drawing.Size(593, 20);
             this.txtPatchBaseURL.TabIndex = 15;
             // 
             // txtClientFolder
             // 
             this.txtClientFolder.Location = new System.Drawing.Point(6, 110);
             this.txtClientFolder.Name = "txtClientFolder";
-            this.txtClientFolder.Size = new System.Drawing.Size(382, 20);
+            this.txtClientFolder.Size = new System.Drawing.Size(490, 20);
             this.txtClientFolder.TabIndex = 14;
             // 
             // txtPatchInfoURL
             // 
             this.txtPatchInfoURL.Location = new System.Drawing.Point(6, 71);
             this.txtPatchInfoURL.Name = "txtPatchInfoURL";
-            this.txtPatchInfoURL.Size = new System.Drawing.Size(382, 20);
+            this.txtPatchInfoURL.Size = new System.Drawing.Size(593, 20);
             this.txtPatchInfoURL.TabIndex = 13;
             // 
             // txtServerName
             // 
             this.txtServerName.Location = new System.Drawing.Point(6, 32);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(382, 20);
+            this.txtServerName.Size = new System.Drawing.Size(593, 20);
             this.txtServerName.TabIndex = 12;
-            // 
-            // btnStartModify
-            // 
-            this.btnStartModify.Location = new System.Drawing.Point(234, 10);
-            this.btnStartModify.Name = "btnStartModify";
-            this.btnStartModify.Size = new System.Drawing.Size(108, 23);
-            this.btnStartModify.TabIndex = 2;
-            this.btnStartModify.Text = "Modify Profile";
-            this.btnStartModify.UseVisualStyleBackColor = true;
-            this.btnStartModify.Click += new System.EventHandler(this.btnStartModify_Click);
-            // 
-            // btnRemove
-            // 
-            this.btnRemove.Location = new System.Drawing.Point(120, 10);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(108, 23);
-            this.btnRemove.TabIndex = 1;
-            this.btnRemove.Text = "Remove Profile";
-            this.btnRemove.UseVisualStyleBackColor = true;
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Location = new System.Drawing.Point(6, 9);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(108, 23);
-            this.btnAdd.TabIndex = 0;
-            this.btnAdd.Text = "Add New Profile";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // txtLog
             // 
@@ -337,8 +313,10 @@
             // 
             this.webControl.Location = new System.Drawing.Point(3, 0);
             this.webControl.Size = new System.Drawing.Size(725, 480);
-            this.webControl.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
+            this.webControl.Source = new System.Uri("http://openmeridian.org/forums/latestnews.php", System.UriKind.Absolute);
             this.webControl.TabIndex = 0;
+            this.webControl.ShowCreatedWebView += new Awesomium.Core.ShowCreatedWebViewEventHandler(this.Awesomium_Windows_Forms_WebControl_ShowCreatedWebView);
+            this.webControl.DocumentReady += new Awesomium.Core.DocumentReadyEventHandler(this.Awesomium_Windows_Forms_WebControl_DocumentReady);
             // 
             // tabLog
             // 
@@ -353,11 +331,11 @@
             // 
             // tabOptions
             // 
-            this.tabOptions.Controls.Add(this.groupProfileSettings);
-            this.tabOptions.Controls.Add(this.btnCacheGen);
             this.tabOptions.Controls.Add(this.btnStartModify);
             this.tabOptions.Controls.Add(this.btnRemove);
             this.tabOptions.Controls.Add(this.btnAdd);
+            this.tabOptions.Controls.Add(this.groupBox1);
+            this.tabOptions.Controls.Add(this.groupProfileSettings);
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
@@ -365,6 +343,45 @@
             this.tabOptions.TabIndex = 1;
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;
+            // 
+            // btnStartModify
+            // 
+            this.btnStartModify.Location = new System.Drawing.Point(617, 73);
+            this.btnStartModify.Name = "btnStartModify";
+            this.btnStartModify.Size = new System.Drawing.Size(108, 23);
+            this.btnStartModify.TabIndex = 28;
+            this.btnStartModify.Text = "Modify Profile";
+            this.btnStartModify.UseVisualStyleBackColor = true;
+            this.btnStartModify.Click += new System.EventHandler(this.btnStartModify_Click);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Location = new System.Drawing.Point(617, 44);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(108, 23);
+            this.btnRemove.TabIndex = 27;
+            this.btnRemove.Text = "Remove Profile";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(617, 13);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(108, 23);
+            this.btnAdd.TabIndex = 26;
+            this.btnAdd.Text = "Add New Profile";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(12, 302);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(524, 163);
+            this.groupBox1.TabIndex = 16;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Global Settings";
             // 
             // btnCreateAccount
             // 
@@ -375,6 +392,25 @@
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
             this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(117, 253);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(216, 13);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "Recreates local cache. May take a moment.";
+            // 
+            // btnCacheGen
+            // 
+            this.btnCacheGen.Location = new System.Drawing.Point(6, 248);
+            this.btnCacheGen.Name = "btnCacheGen";
+            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
+            this.btnCacheGen.TabIndex = 24;
+            this.btnCacheGen.Text = "Verify All Files";
+            this.btnCacheGen.UseVisualStyleBackColor = true;
+            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // ClientPatchForm
             // 
@@ -414,9 +450,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnPatch;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.Button btnStartModify;
         private System.Windows.Forms.GroupBox groupProfileSettings;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
@@ -433,13 +466,19 @@
         private System.Windows.Forms.ProgressBar pbFileProgress;
         private System.ComponentModel.BackgroundWorker bgScanWorker;
         private System.ComponentModel.BackgroundWorker bgDownloadWorker;
-        private System.Windows.Forms.Button btnCacheGen;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabLog;
         private System.Windows.Forms.TabPage tabOptions;
         private System.Windows.Forms.TabPage tabBrowser;
         private Awesomium.Windows.Forms.WebControl webControl;
         private System.Windows.Forms.Button btnCreateAccount;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnStartModify;
+        private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.CheckBox cbUseOgreClient;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnCacheGen;
     }
 }
 

@@ -104,7 +104,7 @@ namespace ClientPatcher
         }
 
         //used when adding from form
-        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault)
+        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault = false, bool usedotnetclient = false)
         {
             var ps = new PatcherSettings
             {
@@ -112,15 +112,29 @@ namespace ClientPatcher
                 PatchBaseUrl = patchbaseurl,
                 PatchInfoUrl = patchinfourl,
                 ServerName = servername,
-                Default = isdefault
+                Default = isdefault,
+                UseDotNetClient = usedotnetclient
             };
-
+            if (isdefault)
+            {
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default == true))
+                {
+                    patcherSettingse.Default = false;
+                }
+            }
             Servers.Add(ps);
             SaveSettings();
             LoadSettings();
         }
         public void AddProfile(PatcherSettings newprofile)
         {
+            if (newprofile.Default)
+            {
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default == true))
+                {
+                    patcherSettingse.Default = false;
+                }
+            }
             Servers.Add(newprofile);
             SaveSettings();
             LoadSettings();

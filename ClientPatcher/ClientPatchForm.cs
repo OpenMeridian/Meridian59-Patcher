@@ -4,6 +4,7 @@ using System.Deployment.Application;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
+using Awesomium.Windows.Forms;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 namespace ClientPatcher
@@ -82,6 +83,11 @@ namespace ClientPatcher
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
+            LaunchProfile();
+        }
+
+        private void LaunchProfile()
+        {
             var meridian = new ProcessStartInfo
             {
                 FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
@@ -89,7 +95,7 @@ namespace ClientPatcher
                 //TODO: add ability to enter username and password during patching
                 //meridian.Arguments = "/U:username /P:password /H:host";
             };
-           
+
             Process.Start(meridian);
             Application.Exit();
         }
@@ -137,9 +143,15 @@ namespace ClientPatcher
 
         private void btnPatch_Click(object sender, EventArgs e)
         {
+            PatchProfile();
+        }
+
+        private void PatchProfile()
+        {
             CheckMeridianRunning();
             StartScan();
         }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
@@ -161,14 +173,14 @@ namespace ClientPatcher
             switch (_changetype)
             {
                 case ChangeType.AddProfile:
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked);
-                    groupProfileSettings.Enabled = false;
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked, cbUseOgreClient.Checked);
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
-                    groupProfileSettings.Enabled = false;
                     break;
             }
+            groupProfileSettings.Enabled = false;
+            _changetype = ChangeType.None;
         }
         private void btnRemove_Click(object sender, EventArgs e)
         {
@@ -354,7 +366,11 @@ namespace ClientPatcher
         private void btnCacheGen_Click(object sender, EventArgs e)
         {
             TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
+            groupProfileSettings.Enabled = false;
+            _changetype = ChangeType.None;
+            tabControl1.SelectTab(1);
             _patcher.GenerateCache();
+            PatchProfile();
         }
 
         private bool _creatingAccount;
@@ -369,11 +385,27 @@ namespace ClientPatcher
             }
             else
             {
-                webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
+                webControl.Source = new Uri("http://openmeridian.org/forums/latestnews.php");
                 btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
                 _creatingAccount = false;
             }
             tabControl1.SelectTab(0);
+        }
+
+        private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
+        {
+            //TxtLogAppendText(webControl.HTML);
+        }
+
+        private void Awesomium_Windows_Forms_WebControl_ShowCreatedWebView(object sender, Awesomium.Core.ShowCreatedWebViewEventArgs e)
+        {
+            WebControl webControl = sender as WebControl;
+            if (webControl == null)
+                return;
+
+            if (!webControl.IsLive)
+                return;
+            webControl.Source = e.TargetURL;
         }
 
     }
