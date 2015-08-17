@@ -133,7 +133,7 @@ namespace ClientPatcher
             }
             catch (WebException e)
             {
-                Console.WriteLine("WebException Handler: {0}", e.ToString());
+                Console.WriteLine("WebException Handler: {0}", e);
                 return 0;
             }
         }
@@ -235,6 +235,10 @@ Download=10016
                 cacheFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(file.ReadToEnd()); //convert
                 file.Close(); //close
             }
+            else
+            {
+                cacheFiles = new List<ManagedFile>();
+            }
 
         }
 
@@ -242,7 +246,8 @@ Download=10016
         {
             foreach (ManagedFile patchFile in PatchFiles)
             {
-                FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
+                if (FileScanned != null)
+                    FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
                 ManagedFile currentFile =
                     cacheFiles.FirstOrDefault(x => x.Basepath + x.Filename == patchFile.Basepath + patchFile.Filename);
                 if (currentFile == null) //file not in cache, download it.
@@ -262,7 +267,8 @@ Download=10016
             foreach (ManagedFile patchFile in PatchFiles)
             {
                 string fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
-                FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
+                if (FileScanned != null)
+                    FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
                 var localFile = new ManagedFile(fullpath);
                 localFile.ComputeHash();
                 if (patchFile.MyHash != localFile.MyHash)
@@ -280,12 +286,13 @@ Download=10016
                 string temp = file.Basepath.Replace("\\", "/");
                 try
                 {
-                    StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+                    if (StartedDownload != null)
+                        StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
                     MyWebClient.DownloadFile(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
                 }
                 catch (WebException e)
                 {
-                    Console.WriteLine("WebException Handler: {0}", e.ToString());
+                    Console.WriteLine("WebException Handler: {0}", e);
                     return;
                 }
             }
@@ -295,7 +302,8 @@ Download=10016
             foreach (ManagedFile file in downloadFiles)
             {
                 string temp = file.Basepath.Replace("\\", "/");
-                StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+                if (StartedDownload != null)
+                    StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
                 DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
                 while (!_continueAsync)
                 {
@@ -316,7 +324,7 @@ Download=10016
                 }
                 catch (WebException e)
                 {
-                    Console.WriteLine(String.Format("Exception: {0}", e.ToString()));
+                    Console.WriteLine("Exception: {0}", e);
                 }
                 _continueAsync = false;
             }

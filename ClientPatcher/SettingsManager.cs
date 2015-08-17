@@ -11,6 +11,9 @@ namespace ClientPatcher
 {
     class SettingsManager
     {
+        //Where to download latest setting from
+        public const string SettingsUrl = "http://ww1.openmeridian.org/settings.php";
+
         private readonly string _settingsPath; //Path to JSON file settings.txt
         private readonly string _settingsFile;
 
@@ -18,45 +21,66 @@ namespace ClientPatcher
 
         public SettingsManager()
         {
-            _settingsPath = "%PROGRAMFILES%\\Open Meridian";
+            _settingsPath = "C:\\Program Files\\Open Meridian";
             _settingsFile = "\\settings.txt";
-            _settingsPath = Environment.ExpandEnvironmentVariables(_settingsPath);
         }
 
-        public void GetNewSettings()
+        public void Refresh()
+        {
+            LoadSettings();
+            MergeWebSettings(GetNewSettings());
+            SaveSettings();
+        }
+        /// <summary>
+        /// Downloads the list of available servers from the open meridian web server using JSON encoded PatcherSettings objects.
+        /// </summary>
+        public List<PatcherSettings> GetNewSettings()
         {
             try
             {
                 var myClient = new WebClient();
+                
+                //Download the settings from the web, store them in a list.
                 var webSettingsList =
-                    JsonConvert.DeserializeObject<List<PatcherSettings>>(
-                        myClient.DownloadString("http://ww1.openmeridian.org/settings.txt")); //Download the settings from the web, store them in a list.
-
-                foreach (PatcherSettings currentSettings in Servers) //Loop through loaded settings from settings.txt
-                {
-                    PatcherSettings settings = currentSettings;
-                    PatcherSettings temp = webSettingsList.First(i => i.Guid == settings.Guid); //Find the server loaded settings that match the local profile by Guid
-                    if (temp != null) //If null, we have profiles to add from the remote server
-                    {
-                        if (currentSettings.PatchBaseUrl != temp.PatchBaseUrl ||
-                            currentSettings.PatchInfoUrl != temp.PatchInfoUrl ||
-                            currentSettings.ServerName != temp.ServerName) //If different
-                        {
-                            currentSettings.PatchBaseUrl = temp.PatchBaseUrl; //Update the server-side settings only
-                            currentSettings.PatchInfoUrl = temp.PatchInfoUrl;
-                            currentSettings.ServerName = temp.ServerName;
-                        }
-                        //Todo: add the new profilses from the server
-                    }
-                }
+                    JsonConvert.DeserializeObject<List<PatcherSettings>>(myClient.DownloadString(SettingsUrl)); 
+                return webSettingsList;
+                
             }
             catch (Exception e)
             {
                 throw new InvalidOperationException("Unable to download settings from server." + e);
-            }
-            
+            }         
         }
-
+        /// <summary>
+        /// Merges a list of PatcherSettings objects with the currently loaded settings
+        /// </summary>
+        /// <param name="webSettingsList">List of PatcherSetting objects to merge</param>
+        public void MergeWebSettings(List<PatcherSettings> webSettingsList )
+        {
+            foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
+            {
+                //find the matching local profile by Guid
+                PatcherSettings localProfile = Servers.FirstOrDefault(i => i.Guid == webProfile.Guid);
+                //if a local match, update, else, add a new local profile
+                if (localProfile != null)
+                {
+                    //dont update all fields on purpose. user retains control of paths, which client to use.
+                    localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
+                    localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
+                    localProfile.ServerName = webProfile.ServerName;
+                    localProfile.FullInstallUrl = webProfile.FullInstallUrl;
+                    localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+                }
+                else
+                {
+                    Servers.Add(webProfile);
+                }
+            }
+        }
+        /// <summary>
+        /// Load the settings.txt file and use json deserialization to create an array of PatcherSettings objects.
+        /// Otherwise, download the settings from the web.
+        /// </summary>
         public void LoadSettings()
         {
             if (File.Exists(_settingsPath + _settingsFile))
@@ -65,20 +89,16 @@ namespace ClientPatcher
 
                 Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd()); //convert
                 file.Close(); //close
-
-                //TODO GetNewSettings() goes here once the infrastructure to support it is in place
             }
             else
             {
-                Servers = new List<PatcherSettings>();
-                Servers.Add(new PatcherSettings(103)); //default entries, with "templates" defined in the class
-                Servers.Add(new PatcherSettings(104));
-                Servers.Add(new PatcherSettings(1));
+                Servers = GetNewSettings();
                 GrantAccess();
-                SaveSettings();
             }
         }
-
+        /// <summary>
+        /// JSON Serialize our PatcherSettings and write them to settings.txt
+        /// </summary>
         public void SaveSettings()
         {
             try
@@ -97,7 +117,7 @@ namespace ClientPatcher
         }
 
         //used when adding from form
-        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault)
+        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault = false, bool usedotnetclient = false)
         {
             var ps = new PatcherSettings
             {
@@ -105,15 +125,29 @@ namespace ClientPatcher
                 PatchBaseUrl = patchbaseurl,
                 PatchInfoUrl = patchinfourl,
                 ServerName = servername,
-                Default = isdefault
+                Default = isdefault,
+                UseDotNetClient = usedotnetclient
             };
-
+            if (isdefault)
+            {
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default))
+                {
+                    patcherSettingse.Default = false;
+                }
+            }
             Servers.Add(ps);
             SaveSettings();
             LoadSettings();
         }
         public void AddProfile(PatcherSettings newprofile)
         {
+            if (newprofile.Default)
+            {
+                foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default))
+                {
+                    patcherSettingse.Default = false;
+                }
+            }
             Servers.Add(newprofile);
             SaveSettings();
             LoadSettings();
@@ -128,7 +162,9 @@ namespace ClientPatcher
         {
             return Servers.Find(x => x.Default);
         }
-
+        /// <summary>
+        /// Sets proper NTFS permissions for the patcher to operate
+        /// </summary>
         private void GrantAccess()
         {
             try

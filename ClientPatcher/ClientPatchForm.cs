@@ -4,8 +4,8 @@ using System.Deployment.Application;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
+using Awesomium.Windows.Forms;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
-using System.Deployment;
 
 namespace ClientPatcher
 {
@@ -23,8 +23,7 @@ namespace ClientPatcher
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
 
-        public bool showFileNames = false;
-
+        public bool ShowFileNames;
 
         public ClientPatchForm()
         {
@@ -32,11 +31,14 @@ namespace ClientPatcher
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            CheckForShortcut();
+
             btnPlay.Enabled = false;
 
             _settings = new SettingsManager();
-            _settings.LoadSettings();
-            _settings.SaveSettings();
+            //Loads settings.txt, updates from the web, saves
+            _settings.Refresh();
 
             _patcher = new ClientPatcher(_settings.GetDefault());
             _patcher.FileScanned += Patcher_FileScanned;
@@ -44,7 +46,7 @@ namespace ClientPatcher
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
 
-            
+            btnCreateAccount.Text = String.Format("Create Account for {0}",_patcher.CurrentProfile.ServerName);
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -56,18 +58,49 @@ namespace ClientPatcher
             RefreshDdl();
         }
 
+
+        void CheckForShortcut()
+        {
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                if (ad.IsFirstRun)  //first time user has run the app
+                {
+                    string company = "OpenMeridian";
+                    string description = "Open Meridian Patch and Client Management";
+
+                    string desktopPath =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        "\\", description, ".appref-ms");
+                    string shortcutName =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+                        "\\", company, "\\", description, ".appref-ms");
+                    System.IO.File.Copy(shortcutName, desktopPath, true);
+
+                }
+            }
+        }
+
         private void btnPlay_Click(object sender, EventArgs e)
+        {
+            LaunchProfile();
+        }
+
+        private void LaunchProfile()
         {
             var meridian = new ProcessStartInfo
             {
                 FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
-                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\"
+                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\",
+                
                 //TODO: add ability to enter username and password during patching
                 //meridian.Arguments = "/U:username /P:password /H:host";
             };
-           
+
             Process.Start(meridian);
             Application.Exit();
+            webControl.Dispose();
+            Environment.Exit(1);
         }
         private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
@@ -79,6 +112,10 @@ namespace ClientPatcher
             txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
             btnPlay.Enabled = false;
 
+            webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
+            btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
+            _creatingAccount = false;
+
             if (groupProfileSettings.Enabled != true) return;
             groupProfileSettings.Enabled = false;
             txtClientFolder.Text = "";
@@ -87,10 +124,37 @@ namespace ClientPatcher
             txtServerName.Text = "";
             cbDefaultServer.Checked = false;
         }
+
+        private void CheckMeridianRunning()
+        {
+            Process[] processlist = Process.GetProcessesByName("meridian");
+            if (processlist.Length != 0)
+            { 
+                foreach (Process process in processlist)
+                {
+                    if (process.Modules[0].FileName.ToLower() ==
+                        (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
+                    {
+                        MessageBox.Show("Warning! You must close Meridian in order to patch successfully!\nPressing OK will close meridian!",
+                            "Meridian Already Running!!", MessageBoxButtons.OK);
+                        process.Kill();
+                    }
+                        
+                }
+            }
+        }
+
         private void btnPatch_Click(object sender, EventArgs e)
         {
+            PatchProfile();
+        }
+
+        private void PatchProfile()
+        {
+            CheckMeridianRunning();
             StartScan();
         }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
@@ -112,14 +176,14 @@ namespace ClientPatcher
             switch (_changetype)
             {
                 case ChangeType.AddProfile:
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked);
-                    groupProfileSettings.Enabled = false;
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked, cbUseOgreClient.Checked);
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
-                    groupProfileSettings.Enabled = false;
                     break;
             }
+            groupProfileSettings.Enabled = false;
+            _changetype = ChangeType.None;
         }
         private void btnRemove_Click(object sender, EventArgs e)
         {
@@ -137,15 +201,11 @@ namespace ClientPatcher
             fbd.ShowDialog(this);
             txtClientFolder.Text = fbd.SelectedPath;
         }
-        private void btnOptions_Click(object sender, EventArgs e)
-        {
-            gbOptions.Visible = !gbOptions.Visible;
-        }
 
         private void Patcher_FileScanned(object sender, ScanEventArgs e)
         {
             PbProgressPerformStep();
-            if (showFileNames)
+            if (ShowFileNames)
                 TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
         }
         private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
@@ -197,7 +257,7 @@ namespace ClientPatcher
                 if (_patcher.HasCache())
                 {
                     TxtLogAppendText("Using local cache....\r\n");
-                    showFileNames = false;
+                    ShowFileNames = false;
                     _patcher.LoadCache();
                     _patcher.CompareCache();
                     PostScan();
@@ -205,7 +265,7 @@ namespace ClientPatcher
                 else
                 {
                     TxtLogAppendText("Scanning local files...\r\n");
-                    showFileNames = true;
+                    ShowFileNames = true;
                     bgScanWorker.RunWorkerAsync(_patcher);
                 }
             }
@@ -309,11 +369,47 @@ namespace ClientPatcher
         private void btnCacheGen_Click(object sender, EventArgs e)
         {
             TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
+            groupProfileSettings.Enabled = false;
+            _changetype = ChangeType.None;
+            tabControl1.SelectTab(1);
             _patcher.GenerateCache();
+            PatchProfile();
         }
 
-        
+        private bool _creatingAccount;
 
+        private void btnCreateAccount_Click(object sender, EventArgs e)
+        {
+            if (!_creatingAccount)
+            {
+                webControl.Source = new Uri(_patcher.CurrentProfile.AccountCreationUrl);
+                btnCreateAccount.Text = "Back to News";
+                _creatingAccount = true;
+            }
+            else
+            {
+                webControl.Source = new Uri("http://openmeridian.org/forums/latestnews.php");
+                btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
+                _creatingAccount = false;
+            }
+            tabControl1.SelectTab(0);
+        }
+
+        private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
+        {
+            //TxtLogAppendText(webControl.HTML);
+        }
+
+        private void Awesomium_Windows_Forms_WebControl_ShowCreatedWebView(object sender, Awesomium.Core.ShowCreatedWebViewEventArgs e)
+        {
+            WebControl webControl = sender as WebControl;
+            if (webControl == null)
+                return;
+
+            if (!webControl.IsLive)
+                return;
+            webControl.Source = e.TargetURL;
+        }
 
     }
 }
