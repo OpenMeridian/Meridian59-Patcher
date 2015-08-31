@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace PatchListGenerator
@@ -40,14 +41,32 @@ namespace PatchListGenerator
 
         public void ComputeHash()
         {
+            //We're going to read the first 64 bytes or so of the file, salt it with the filename, and coompute a MD5 hash.
+
             MD5 md5 = MD5.Create();
             if (!File.Exists(Filepath))
             {
                 MyHash = "";
                 return;
             }
+
             FileStream stream = File.OpenRead(Filepath);
-            MyHash = ByteArrayToString(md5.ComputeHash(stream));
+            long numBytesToRead = 64;
+            if (stream.Length < 64) //Make sure we dont read past the end of a file smaller than 64 bytes
+            {
+                numBytesToRead = stream.Length;
+            }
+            
+            byte[] fileBytes = new byte[numBytesToRead];
+            byte[] fileNameBytes = Encoding.ASCII.GetBytes(Filename);
+            byte[] hashableBytes = new byte[numBytesToRead + Filename.Length];
+
+            stream.Read(fileBytes, 0, (int) numBytesToRead);
+
+            Buffer.BlockCopy(fileBytes,0,hashableBytes,0,fileBytes.Length);
+            Buffer.BlockCopy(fileNameBytes,0,hashableBytes,fileBytes.Length, fileNameBytes.Length);
+
+            MyHash = ByteArrayToString(md5.ComputeHash(hashableBytes));
         }
 
         private string ByteArrayToString(byte[] bytearray)

@@ -171,7 +171,8 @@ namespace ClientPatcher
         {
             try
             {
-                const string defaultIni = @"[Comm]
+                const string defaultIni = 
+@"[Comm]
 ServerNumber=103
 [Miscellaneous]
 UserName=username

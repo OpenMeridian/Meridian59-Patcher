@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Awesomium.Windows.Forms;
+using PatchListGenerator;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 namespace ClientPatcher
@@ -169,6 +170,24 @@ namespace ClientPatcher
             txtPatchInfoURL.Text = ps.PatchInfoUrl;
             txtServerName.Text = ps.ServerName;
             cbDefaultServer.Checked = ps.Default;
+            switch (ps.ClientType)
+            {
+                case ClientType.Classic:
+                    rbClassic.Checked = true;
+                    rbDotNetX64.Checked = false;
+                    rbDotNetX86.Checked = false;
+                    break;
+                case ClientType.DotNetX64:
+                    rbClassic.Checked = false;
+                    rbDotNetX64.Checked = true;
+                    rbDotNetX86.Checked = false;
+                    break;
+                case ClientType.DotNetX86:
+                    rbClassic.Checked = false;
+                    rbDotNetX64.Checked = false;
+                    rbDotNetX86.Checked = true;
+                    break;
+            }
             _changetype = ChangeType.ModProfile;
         }
         private void btnSave_Click(object sender, EventArgs e)
@@ -176,7 +195,16 @@ namespace ClientPatcher
             switch (_changetype)
             {
                 case ChangeType.AddProfile:
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked, cbUseOgreClient.Checked);
+                    ClientType clientType = ClientType.Classic;
+                    if (rbDotNetX64.Checked)
+                    {
+                        clientType = ClientType.DotNetX64;
+                    }
+                    if (rbDotNetX86.Checked)
+                    {
+                        clientType = ClientType.DotNetX86;
+                    }
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
@@ -232,6 +260,16 @@ namespace ClientPatcher
             _settings.Servers[selected].PatchInfoUrl = txtPatchInfoURL.Text;
             _settings.Servers[selected].ServerName = txtServerName.Text;
             _settings.Servers[selected].Default = cbDefaultServer.Checked;
+            ClientType clientType = ClientType.Classic;
+            if (rbDotNetX64.Checked)
+            {
+                clientType = ClientType.DotNetX64;
+            }
+            if (rbDotNetX86.Checked)
+            {
+                clientType = ClientType.DotNetX86;
+            }
+            _settings.Servers[selected].ClientType = clientType;
             _changetype = ChangeType.None;
             _settings.SaveSettings();
             _settings.LoadSettings();
@@ -409,6 +447,24 @@ namespace ClientPatcher
             if (!webControl.IsLive)
                 return;
             webControl.Source = e.TargetURL;
+        }
+
+        private void rbClassic_CheckedChanged(object sender, EventArgs e)
+        {
+            rbDotNetX64.Checked = false;
+            rbDotNetX86.Checked = false;
+        }
+
+        private void rbDotNetX86_CheckedChanged(object sender, EventArgs e)
+        {
+            rbClassic.Checked = false;
+            rbDotNetX64.Checked = false;
+        }
+
+        private void rbDotNetX64_CheckedChanged(object sender, EventArgs e)
+        {
+            rbClassic.Checked = false;
+            rbDotNetX86.Checked = false;
         }
 
     }

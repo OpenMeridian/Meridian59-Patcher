@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PatchListGenerator;
 
 namespace ClientPatcher
 {
@@ -12,7 +13,7 @@ namespace ClientPatcher
         public string FullInstallUrl { get; set; } //Path to a .zip file of the full client to download for first run
         public string AccountCreationUrl { get; set; } //URL to load when "Create Account" button is clicked.
         public bool Default { get; set; }          //Is this profile the default-selected at start up?
-        public bool UseDotNetClient { get; set; }  //Does this profile use the Ogre client?
+        public ClientType ClientType { get; set; } //Which client does this profile use?
 
         public PatcherSettings()
         {
@@ -23,17 +24,17 @@ namespace ClientPatcher
             AccountCreationUrl = "http://ww1.openmeridian.org/103/acctcreate.php";
             Guid = "5AD1FB01-A84A-47D1-85B8-5F85FB0C201E";
             Default = true;
-            UseDotNetClient = false;
+            ClientType = ClientType.Classic;
         }
 
-        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, bool defaultserver = false, bool usedotnetclient = false)
+        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, bool defaultserver = false, ClientType clientType = ClientType.Classic)
         {
             ServerName = servername;
             PatchInfoUrl = patchinfourl;
             ClientFolder = clientfolder;
             PatchBaseUrl = patchbaseurl;
             Default = defaultserver;
-            UseDotNetClient = usedotnetclient;
+            ClientType = clientType;
         }
 
         public string ToJson()

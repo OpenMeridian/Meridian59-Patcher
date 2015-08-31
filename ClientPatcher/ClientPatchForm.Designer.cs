@@ -37,7 +37,8 @@
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
-            this.cbUseOgreClient = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnCacheGen = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -63,8 +64,9 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCacheGen = new System.Windows.Forms.Button();
+            this.rbClassic = new System.Windows.Forms.RadioButton();
+            this.rbDotNetX86 = new System.Windows.Forms.RadioButton();
+            this.rbDotNetX64 = new System.Windows.Forms.RadioButton();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -131,9 +133,11 @@
             // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.Controls.Add(this.rbDotNetX64);
+            this.groupProfileSettings.Controls.Add(this.rbDotNetX86);
+            this.groupProfileSettings.Controls.Add(this.rbClassic);
             this.groupProfileSettings.Controls.Add(this.label1);
             this.groupProfileSettings.Controls.Add(this.btnCacheGen);
-            this.groupProfileSettings.Controls.Add(this.cbUseOgreClient);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
             this.groupProfileSettings.Controls.Add(this.btnSave);
             this.groupProfileSettings.Controls.Add(this.label8);
@@ -148,20 +152,29 @@
             this.groupProfileSettings.Enabled = false;
             this.groupProfileSettings.Location = new System.Drawing.Point(6, 7);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(605, 277);
+            this.groupProfileSettings.Size = new System.Drawing.Size(605, 305);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
-            // cbUseOgreClient
+            // label1
             // 
-            this.cbUseOgreClient.AutoSize = true;
-            this.cbUseOgreClient.Location = new System.Drawing.Point(6, 198);
-            this.cbUseOgreClient.Name = "cbUseOgreClient";
-            this.cbUseOgreClient.Size = new System.Drawing.Size(183, 17);
-            this.cbUseOgreClient.TabIndex = 23;
-            this.cbUseOgreClient.Text = "Use .NET (Ogre3d) Client BETA?";
-            this.cbUseOgreClient.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(116, 275);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(216, 13);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "Recreates local cache. May take a moment.";
+            // 
+            // btnCacheGen
+            // 
+            this.btnCacheGen.Location = new System.Drawing.Point(5, 270);
+            this.btnCacheGen.Name = "btnCacheGen";
+            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
+            this.btnCacheGen.TabIndex = 24;
+            this.btnCacheGen.Text = "Verify All Files";
+            this.btnCacheGen.UseVisualStyleBackColor = true;
+            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // btnBrowse
             // 
@@ -175,9 +188,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(331, 175);
+            this.btnSave.Location = new System.Drawing.Point(502, 244);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(268, 51);
+            this.btnSave.Size = new System.Drawing.Size(97, 55);
             this.btnSave.TabIndex = 21;
             this.btnSave.Text = "Save Changes";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -376,9 +389,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(12, 302);
+            this.groupBox1.Location = new System.Drawing.Point(12, 328);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(524, 163);
+            this.groupBox1.Size = new System.Drawing.Size(524, 137);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Global Settings";
@@ -393,24 +406,40 @@
             this.btnCreateAccount.UseVisualStyleBackColor = true;
             this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
-            // label1
+            // rbClassic
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(117, 253);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 13);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "Recreates local cache. May take a moment.";
+            this.rbClassic.AutoSize = true;
+            this.rbClassic.Checked = true;
+            this.rbClassic.Location = new System.Drawing.Point(6, 198);
+            this.rbClassic.Name = "rbClassic";
+            this.rbClassic.Size = new System.Drawing.Size(87, 17);
+            this.rbClassic.TabIndex = 26;
+            this.rbClassic.TabStop = true;
+            this.rbClassic.Text = "Classic Client";
+            this.rbClassic.UseVisualStyleBackColor = true;
+            this.rbClassic.CheckedChanged += new System.EventHandler(this.rbClassic_CheckedChanged);
             // 
-            // btnCacheGen
+            // rbDotNetX86
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(6, 248);
-            this.btnCacheGen.Name = "btnCacheGen";
-            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
-            this.btnCacheGen.TabIndex = 24;
-            this.btnCacheGen.Text = "Verify All Files";
-            this.btnCacheGen.UseVisualStyleBackColor = true;
-            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
+            this.rbDotNetX86.AutoSize = true;
+            this.rbDotNetX86.Location = new System.Drawing.Point(6, 221);
+            this.rbDotNetX86.Name = "rbDotNetX86";
+            this.rbDotNetX86.Size = new System.Drawing.Size(99, 17);
+            this.rbDotNetX86.TabIndex = 27;
+            this.rbDotNetX86.Text = ".NET x86 Client";
+            this.rbDotNetX86.UseVisualStyleBackColor = true;
+            this.rbDotNetX86.CheckedChanged += new System.EventHandler(this.rbDotNetX86_CheckedChanged);
+            // 
+            // rbDotNetX64
+            // 
+            this.rbDotNetX64.AutoSize = true;
+            this.rbDotNetX64.Location = new System.Drawing.Point(6, 244);
+            this.rbDotNetX64.Name = "rbDotNetX64";
+            this.rbDotNetX64.Size = new System.Drawing.Size(99, 17);
+            this.rbDotNetX64.TabIndex = 28;
+            this.rbDotNetX64.Text = ".NET x64 Client";
+            this.rbDotNetX64.UseVisualStyleBackColor = true;
+            this.rbDotNetX64.CheckedChanged += new System.EventHandler(this.rbDotNetX64_CheckedChanged);
             // 
             // ClientPatchForm
             // 
@@ -476,9 +505,11 @@
         private System.Windows.Forms.Button btnStartModify;
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.CheckBox cbUseOgreClient;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnCacheGen;
+        private System.Windows.Forms.RadioButton rbDotNetX64;
+        private System.Windows.Forms.RadioButton rbDotNetX86;
+        private System.Windows.Forms.RadioButton rbClassic;
     }
 }
 

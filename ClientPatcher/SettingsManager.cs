@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Security.AccessControl;
 using System.Net;
+using PatchListGenerator;
 
 namespace ClientPatcher
 {
@@ -117,7 +118,7 @@ namespace ClientPatcher
         }
 
         //used when adding from form
-        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault = false, bool usedotnetclient = false)
+        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault = false, ClientType clientType = ClientType.Classic)
         {
             var ps = new PatcherSettings
             {
@@ -126,7 +127,7 @@ namespace ClientPatcher
                 PatchInfoUrl = patchinfourl,
                 ServerName = servername,
                 Default = isdefault,
-                UseDotNetClient = usedotnetclient
+                ClientType = clientType
             };
             if (isdefault)
             {
