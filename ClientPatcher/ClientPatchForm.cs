@@ -168,6 +168,7 @@ namespace ClientPatcher
             txtClientFolder.Text = ps.ClientFolder;
             txtPatchBaseURL.Text = ps.PatchBaseUrl;
             txtPatchInfoURL.Text = ps.PatchInfoUrl;
+            txtFullInstallURL.Text = ps.FullInstallUrl;
             txtServerName.Text = ps.ServerName;
             cbDefaultServer.Checked = ps.Default;
             switch (ps.ClientType)
@@ -204,7 +205,7 @@ namespace ClientPatcher
                     {
                         clientType = ClientType.DotNetX86;
                     }
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text,txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
@@ -258,6 +259,7 @@ namespace ClientPatcher
             _settings.Servers[selected].ClientFolder = txtClientFolder.Text;
             _settings.Servers[selected].PatchBaseUrl = txtPatchBaseURL.Text;
             _settings.Servers[selected].PatchInfoUrl = txtPatchInfoURL.Text;
+            _settings.Servers[selected].FullInstallUrl = txtFullInstallURL.Text;
             _settings.Servers[selected].ServerName = txtServerName.Text;
             _settings.Servers[selected].Default = cbDefaultServer.Checked;
             ClientType clientType = ClientType.Classic;
@@ -451,20 +453,20 @@ namespace ClientPatcher
 
         private void rbClassic_CheckedChanged(object sender, EventArgs e)
         {
-            rbDotNetX64.Checked = false;
-            rbDotNetX86.Checked = false;
+            //rbDotNetX64.Checked = false;
+            //rbDotNetX86.Checked = false;
         }
 
         private void rbDotNetX86_CheckedChanged(object sender, EventArgs e)
         {
-            rbClassic.Checked = false;
-            rbDotNetX64.Checked = false;
+            //rbClassic.Checked = false;
+            //rbDotNetX64.Checked = false;
         }
 
         private void rbDotNetX64_CheckedChanged(object sender, EventArgs e)
         {
-            rbClassic.Checked = false;
-            rbDotNetX86.Checked = false;
+            //rbClassic.Checked = false;
+            //rbDotNetX86.Checked = false;
         }
 
     }

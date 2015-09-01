@@ -19,6 +19,7 @@ namespace ClientPatcher
         {
             ServerName = "103";
             PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
+            FullInstallUrl = "http://ww1.openmeridian.org/103/Meridian59.Client.Classic.zip";
             ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
             PatchBaseUrl = "http://ww1.openmeridian.org/103/clientpatch";
             AccountCreationUrl = "http://ww1.openmeridian.org/103/acctcreate.php";
@@ -27,12 +28,13 @@ namespace ClientPatcher
             ClientType = ClientType.Classic;
         }
 
-        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, bool defaultserver = false, ClientType clientType = ClientType.Classic)
+        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, string fullinstallurl, bool defaultserver = false, ClientType clientType = ClientType.Classic)
         {
             ServerName = servername;
             PatchInfoUrl = patchinfourl;
             ClientFolder = clientfolder;
             PatchBaseUrl = patchbaseurl;
+            FullInstallUrl = fullinstallurl;
             Default = defaultserver;
             ClientType = clientType;
         }

@@ -7,14 +7,14 @@ namespace PatchListGenerator
 {
     public enum ClientType
     {
-        Classic,
-        DotNetX64,
-        DotNetX86
+        Classic = 0,
+        DotNetX64 = 1,
+        DotNetX86 = 2
     }
 
     public class ClientScanner
     {
-        private List<string> ScanFolder { get; set; }
+        private List<string> ScanFiles { get; set; }
         private List<string> ScanExtensions { get; set; }
         public List<ManagedFile> Files { get; set; }
         public string BasePath { get; set; }
@@ -38,19 +38,55 @@ namespace PatchListGenerator
         {
             ClientType = clientType;
             ScannerSetup(basepath);
+            BasePath = basepath;
         }
 
         private void ScannerSetup(string basepath)
         {
-            if (ClientType != ClientType.Classic)
+            switch (ClientType)
             {
-                AddDotNetExensions();
+                    case ClientType.Classic:
+                        AddLegacyExensions();
+                        ScanFiles = new List<string>();
+                        ScanFiles.AddRange(DirSearch(basepath));
+                        break;
+                    case ClientType.DotNetX64:
+                        ScanFiles = new List<string>();
+                        ScanFiles.AddRange(DirSearch(basepath + "\\x64"));
+                        ScanFiles.AddRange(DirSearch(basepath + "\\resources"));
+                        AddDotNetExensions();
+                        break;
+                    case ClientType.DotNetX86:
+                        ScanFiles = new List<string>();
+                        ScanFiles.AddRange(DirSearch(basepath + "\\x86"));
+                        ScanFiles.AddRange(DirSearch(basepath + "\\resources"));
+                        AddDotNetExensions();
+                        break;
             }
-            else
+        }
+
+        
+
+        private List<String> DirSearch(string sDir)
+        {
+            List<String> files = new List<String>();
+            try
             {
-                ScanFolder = new List<string> {basepath, basepath + "\\resource"};
-                AddLegacyExensions();
+                foreach (string f in Directory.GetFiles(sDir))
+                {
+                    files.Add(f);
+                }
+                foreach (string d in Directory.GetDirectories(sDir))
+                {
+                    files.AddRange(DirSearch(d));
+                }
             }
+            catch (System.Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return files;
         }
 
         private void AddDotNetExensions()
@@ -68,26 +104,16 @@ namespace PatchListGenerator
         public void ScanSource()
         {
             Files = new List<ManagedFile>();
-            foreach (string folder in ScanFolder) //
+            foreach (string fileName in ScanFiles)
             {
-                if (!Directory.Exists(folder))
+                string ext = fileName.Substring(fileName.Length - 4).ToLower();
+                if (ScanExtensions.Contains(ext))
                 {
-                    //Folder doesn't exist =(
-                    throw new Exception();
-                }
-                // Process the list of files found in the directory. 
-                string[] fileEntries = Directory.GetFiles(folder);
-                foreach (string fileName in fileEntries)
-                {
-                    string ext = fileName.Substring(fileName.Length - 4).ToLower();
-                    if (ScanExtensions.Contains(ext))
-                    {
-                        var file = new ManagedFile(fileName);
-                        file.ParseFilePath();
-                        file.ComputeHash();
-                        file.FillLength();
-                        Files.Add(file);
-                    }
+                    var file = new ManagedFile(fileName);
+                    file.Basepath = fileName.Substring(BasePath.Length);
+                    file.ComputeHash();
+                    file.FillLength();
+                    Files.Add(file);
                 }
             }
         }

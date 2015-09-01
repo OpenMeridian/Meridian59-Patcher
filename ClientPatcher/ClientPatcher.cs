@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -67,6 +68,7 @@ namespace ClientPatcher
     class ClientPatcher
     {
         const string CacheFile = "\\cache.txt";
+        private const string UserAgentString = "Mozilla/4.0 (compatible; .NET CLR 4.0.;) OpenMeridianPatcher v1.4";
 
         private string _patchInfoJason = "";
 
@@ -115,16 +117,19 @@ namespace ClientPatcher
         {
             downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
+            MyWebClient.Headers.Add("user-agent", UserAgentString);
         }
         public ClientPatcher(PatcherSettings settings)
         {
             downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
+            MyWebClient.Headers.Add("user-agent", UserAgentString);
             CurrentProfile = settings;
         }
         public int DownloadPatchDefinition()
         {
             var wc = new WebClient();
+            wc.Headers.Add("user-agent", UserAgentString);
             try
             {
                 _patchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoUrl);
@@ -196,6 +201,24 @@ Download=10016
             CreateFolderStructure();
             CreateDefaultIni();
             //TODO: Replace this with code to download an initial .zip of the client.
+        }
+
+        public void UnZip(string zipFile, string folderPath)
+        {
+            if (!File.Exists(zipFile))
+                throw new FileNotFoundException();
+
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            Shell32.Shell objShell = new Shell32.Shell();
+            Shell32.Folder destinationFolder = objShell.NameSpace(folderPath);
+            Shell32.Folder sourceFile = objShell.NameSpace(zipFile);
+
+            foreach (var file in sourceFile.Items())
+            {
+                destinationFolder.CopyHere(file, 4 | 16);
+            }
         }
 
         public void ScanClient()
@@ -317,6 +340,7 @@ Download=10016
         {
             using (var client = new WebClient())
             {
+                client.Headers.Add("user-agent", UserAgentString);
                 try
                 {
                     client.DownloadProgressChanged += client_DownloadProgressChanged;

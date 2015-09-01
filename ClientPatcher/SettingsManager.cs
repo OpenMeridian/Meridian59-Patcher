@@ -13,7 +13,9 @@ namespace ClientPatcher
     class SettingsManager
     {
         //Where to download latest setting from
-        public const string SettingsUrl = "http://ww1.openmeridian.org/settings.php";
+        private const string SettingsUrl = "http://ww1.openmeridian.org/settings.php";
+        private const string UserAgentString = "Mozilla/4.0 (compatible; .NET CLR 4.0.;) OpenMeridianPatcher v1.4";
+
 
         private readonly string _settingsPath; //Path to JSON file settings.txt
         private readonly string _settingsFile;
@@ -40,7 +42,7 @@ namespace ClientPatcher
             try
             {
                 var myClient = new WebClient();
-                
+                myClient.Headers.Add("user-agent", UserAgentString);
                 //Download the settings from the web, store them in a list.
                 var webSettingsList =
                     JsonConvert.DeserializeObject<List<PatcherSettings>>(myClient.DownloadString(SettingsUrl)); 
@@ -58,6 +60,11 @@ namespace ClientPatcher
         /// <param name="webSettingsList">List of PatcherSetting objects to merge</param>
         public void MergeWebSettings(List<PatcherSettings> webSettingsList )
         {
+            if (Servers == null)
+            {
+                Servers = webSettingsList;
+                return;
+            }
             foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
             {
                 //find the matching local profile by Guid
@@ -118,13 +125,14 @@ namespace ClientPatcher
         }
 
         //used when adding from form
-        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault = false, ClientType clientType = ClientType.Classic)
+        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string fullinstallurl, string servername, bool isdefault = false, ClientType clientType = ClientType.Classic)
         {
             var ps = new PatcherSettings
             {
                 ClientFolder = clientfolder,
                 PatchBaseUrl = patchbaseurl,
                 PatchInfoUrl = patchinfourl,
+                FullInstallUrl = fullinstallurl,
                 ServerName = servername,
                 Default = isdefault,
                 ClientType = clientType

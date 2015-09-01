@@ -67,6 +67,8 @@
             this.rbClassic = new System.Windows.Forms.RadioButton();
             this.rbDotNetX86 = new System.Windows.Forms.RadioButton();
             this.rbDotNetX64 = new System.Windows.Forms.RadioButton();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtFullInstallURL = new System.Windows.Forms.TextBox();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -133,6 +135,8 @@
             // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.Controls.Add(this.label4);
+            this.groupProfileSettings.Controls.Add(this.txtFullInstallURL);
             this.groupProfileSettings.Controls.Add(this.rbDotNetX64);
             this.groupProfileSettings.Controls.Add(this.rbDotNetX86);
             this.groupProfileSettings.Controls.Add(this.rbClassic);
@@ -152,7 +156,7 @@
             this.groupProfileSettings.Enabled = false;
             this.groupProfileSettings.Location = new System.Drawing.Point(6, 7);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(605, 305);
+            this.groupProfileSettings.Size = new System.Drawing.Size(605, 341);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
@@ -160,7 +164,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(116, 275);
+            this.label1.Location = new System.Drawing.Point(117, 312);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(216, 13);
             this.label1.TabIndex = 25;
@@ -168,7 +172,7 @@
             // 
             // btnCacheGen
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(5, 270);
+            this.btnCacheGen.Location = new System.Drawing.Point(6, 307);
             this.btnCacheGen.Name = "btnCacheGen";
             this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
             this.btnCacheGen.TabIndex = 24;
@@ -188,7 +192,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(502, 244);
+            this.btnSave.Location = new System.Drawing.Point(502, 275);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(97, 55);
             this.btnSave.TabIndex = 21;
@@ -235,7 +239,7 @@
             // cbDefaultServer
             // 
             this.cbDefaultServer.AutoSize = true;
-            this.cbDefaultServer.Location = new System.Drawing.Point(6, 175);
+            this.cbDefaultServer.Location = new System.Drawing.Point(6, 212);
             this.cbDefaultServer.Name = "cbDefaultServer";
             this.cbDefaultServer.Size = new System.Drawing.Size(100, 17);
             this.cbDefaultServer.TabIndex = 16;
@@ -389,9 +393,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(12, 328);
+            this.groupBox1.Location = new System.Drawing.Point(12, 354);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(524, 137);
+            this.groupBox1.Size = new System.Drawing.Size(524, 111);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Global Settings";
@@ -410,7 +414,7 @@
             // 
             this.rbClassic.AutoSize = true;
             this.rbClassic.Checked = true;
-            this.rbClassic.Location = new System.Drawing.Point(6, 198);
+            this.rbClassic.Location = new System.Drawing.Point(7, 235);
             this.rbClassic.Name = "rbClassic";
             this.rbClassic.Size = new System.Drawing.Size(87, 17);
             this.rbClassic.TabIndex = 26;
@@ -422,7 +426,7 @@
             // rbDotNetX86
             // 
             this.rbDotNetX86.AutoSize = true;
-            this.rbDotNetX86.Location = new System.Drawing.Point(6, 221);
+            this.rbDotNetX86.Location = new System.Drawing.Point(7, 258);
             this.rbDotNetX86.Name = "rbDotNetX86";
             this.rbDotNetX86.Size = new System.Drawing.Size(99, 17);
             this.rbDotNetX86.TabIndex = 27;
@@ -433,13 +437,29 @@
             // rbDotNetX64
             // 
             this.rbDotNetX64.AutoSize = true;
-            this.rbDotNetX64.Location = new System.Drawing.Point(6, 244);
+            this.rbDotNetX64.Location = new System.Drawing.Point(7, 281);
             this.rbDotNetX64.Name = "rbDotNetX64";
             this.rbDotNetX64.Size = new System.Drawing.Size(99, 17);
             this.rbDotNetX64.TabIndex = 28;
             this.rbDotNetX64.Text = ".NET x64 Client";
             this.rbDotNetX64.UseVisualStyleBackColor = true;
             this.rbDotNetX64.CheckedChanged += new System.EventHandler(this.rbDotNetX64_CheckedChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(11, 170);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 13);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "FullInstallURL";
+            // 
+            // txtFullInstallURL
+            // 
+            this.txtFullInstallURL.Location = new System.Drawing.Point(6, 186);
+            this.txtFullInstallURL.Name = "txtFullInstallURL";
+            this.txtFullInstallURL.Size = new System.Drawing.Size(593, 20);
+            this.txtFullInstallURL.TabIndex = 29;
             // 
             // ClientPatchForm
             // 
@@ -510,6 +530,8 @@
         private System.Windows.Forms.RadioButton rbDotNetX64;
         private System.Windows.Forms.RadioButton rbDotNetX86;
         private System.Windows.Forms.RadioButton rbClassic;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtFullInstallURL;
     }
 }
 
