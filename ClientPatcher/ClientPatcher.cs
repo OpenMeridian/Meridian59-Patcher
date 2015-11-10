@@ -61,7 +61,7 @@ namespace ClientPatcher
     public delegate void ProgressDownloadEventHandler(object sender, DownloadProgressChangedEventArgs e);
     //Event when we Complete a Download, used to notify UI.
     public delegate void EndDownloadEventHandler(object sender, AsyncCompletedEventArgs e);
-    public delegate void FailDownloadHandler(object sender, InvalidOperationException e);
+    public delegate void FailDownloadHandler(object sender, AsyncCompletedEventArgs e);
 
     #endregion
 
@@ -78,6 +78,16 @@ namespace ClientPatcher
         public WebClient MyWebClient;
 
         bool _continueAsync;
+        bool _retryFile;
+
+        private bool _downloadFileFailed;
+        public bool DownloadFileFailed
+        {
+           get
+           {
+              return _downloadFileFailed;
+           }
+        }
 
         public PatcherSettings CurrentProfile { get; set; }
 
@@ -111,7 +121,7 @@ namespace ClientPatcher
                 EndedDownload(this, e);
         }
         public event FailDownloadHandler FailedDownload;
-        protected virtual void OnFailedDownload(InvalidOperationException e)
+        protected virtual void OnFailedDownload(AsyncCompletedEventArgs e)
         {
            if (FailedDownload != null)
               FailedDownload(this, e);
@@ -120,11 +130,13 @@ namespace ClientPatcher
 
         public ClientPatcher()
         {
+            _downloadFileFailed = false;
             downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
         }
         public ClientPatcher(PatcherSettings settings)
         {
+            _downloadFileFailed = false;
             downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
             CurrentProfile = settings;
@@ -297,13 +309,21 @@ Download=10016
                 }
             }
         }
+
+        public void DownloadOneFileAsync(ManagedFile file)
+        {
+           string temp = file.Basepath.Replace("\\", "/");
+           StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+           DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename, file);
+        }
+
         public void DownloadFilesAsync()
         {
+            _retryFile = true;
             foreach (ManagedFile file in downloadFiles)
             {
-                string temp = file.Basepath.Replace("\\", "/");
-                StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
-                DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+               DownloadOneFileAsync(file);
+
                 while (!_continueAsync)
                 {
                     //Wait for the previous file to finish
@@ -311,7 +331,8 @@ Download=10016
                 }
             }
         }
-        public void DownloadFileAsync(string url, string path)
+
+        public void DownloadFileAsync(string url, string path, ManagedFile file)
         {
             using (var client = new WebClient())
             {
@@ -319,7 +340,7 @@ Download=10016
                 {
                     client.DownloadProgressChanged += client_DownloadProgressChanged;
                     client.DownloadFileCompleted += client_DownloadFileCompleted;
-                    client.DownloadFileAsync(new Uri(url), path);
+                    client.DownloadFileAsync(new Uri(url), path, file);
                 }
                 catch (WebException e)
                 {
@@ -331,18 +352,42 @@ Download=10016
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Error is InvalidOperationException)
-            {
-                OnFailedDownload((InvalidOperationException)e.Error);
-                return;
-            }
-            OnEndDownload(e);
+           ManagedFile file = (ManagedFile)e.UserState;
+           if (e.Error is InvalidOperationException)
+           {
+               OnFailedDownload(e);
+               // Try file again.
+               if (_retryFile)
+               {
+                  _retryFile = false;
+                  DownloadOneFileAsync(file);
+                  return;
+               }
+               else
+               {
+                  // Patching this file failed.
+                  _downloadFileFailed = true;
+                  // Add the local file's hash to the patchfile, which will be saved at the end.
+                  foreach (ManagedFile patchFile in PatchFiles)
+                  {
+                     if (patchFile.Filename == file.Filename)
+                     {
+                        patchFile.MyHash = file.MyHash;
+                        break;
+                     }
+                  }
+               }
+           }
+           else
+           {
+              _retryFile = true;
+              OnEndDownload(e);
+           }
             _continueAsync = true;
         }
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             OnProgressedDownload(e);
         }
-
     }
 }

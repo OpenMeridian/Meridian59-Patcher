@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 using System.Deployment;
+using PatchListGenerator;
 
 namespace ClientPatcher
 {
@@ -86,10 +87,36 @@ namespace ClientPatcher
             txtServerName.Text = "";
             cbDefaultServer.Checked = false;
         }
+
+        private void CheckMeridianRunning()
+        {
+           Process[] processlist = Process.GetProcessesByName("meridian");
+           if (processlist.Length != 0)
+           {
+              foreach (Process process in processlist)
+              {
+                 if (process.Modules[0].FileName.ToLower() ==
+                     (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
+                 {
+                    process.Kill();
+                    MessageBox.Show("Warning! You must have Meridian closed in order to patch successfully!",
+                        "Meridian Already Running!!", MessageBoxButtons.OK);
+                 }
+              }
+           }
+        }
+
         private void btnPatch_Click(object sender, EventArgs e)
         {
-            StartScan();
+           PatchProfile();
         }
+
+        private void PatchProfile()
+        {
+           CheckMeridianRunning();
+           StartScan();
+        }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
@@ -162,9 +189,11 @@ namespace ClientPatcher
         {
             PbFileProgressSetValueStep(100);
         }
-        private void Patcher_FailedDownload(object sender, InvalidOperationException e)
+        private void Patcher_FailedDownload(object sender, AsyncCompletedEventArgs e)
         {
-            TxtLogAppendText(String.Format("Failed download: {0}\r\n", e.ToString()));
+            ManagedFile file = (ManagedFile)e.UserState;
+            TxtLogAppendText(String.Format("Failed to download file {0}\r\n", file.Filename));
+            CheckMeridianRunning();
         }
 
         private void ModProfile()
@@ -235,7 +264,13 @@ namespace ClientPatcher
             pbProgress.Value = pbProgress.Maximum;
             pbFileProgress.Visible = true;
             pbFileProgress.Value = pbFileProgress.Maximum;
-            TxtLogAppendText("Patching Complete!\r\nWriting File Cache.\r\n");
+            if (_patcher.DownloadFileFailed)
+            {
+               TxtLogAppendText("Patching failed!\r\n");
+                TxtLogAppendText("Ensure the Meridian 59 client is closed while patching and if the problem persists, raise an issue at openmeridian.org/forums/\r\n");
+            }
+            else
+                TxtLogAppendText("Patching Complete!\r\nWriting File Cache.\r\n");
             _patcher.SavePatchAsCache();
             btnPlay.Enabled = true;
         }
