@@ -308,12 +308,10 @@ namespace ClientPatcher
 
         private void btnCacheGen_Click(object sender, EventArgs e)
         {
+            gbOptions.Visible = !gbOptions.Visible;
             TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
             _patcher.GenerateCache();
+            TxtLogAppendText("Caching Complete!\r\n");
         }
-
-        
-
-
     }
 }
