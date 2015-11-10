@@ -43,8 +43,7 @@ namespace ClientPatcher
             _patcher.StartedDownload += Patcher_StartedDownload;
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
-
-            
+            _patcher.FailedDownload += Patcher_FailedDownload;
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -162,6 +161,10 @@ namespace ClientPatcher
         private void Patcher_EndedDownload(object sender, AsyncCompletedEventArgs e)
         {
             PbFileProgressSetValueStep(100);
+        }
+        private void Patcher_FailedDownload(object sender, InvalidOperationException e)
+        {
+            TxtLogAppendText(String.Format("Failed download: {0}\r\n", e.ToString()));
         }
 
         private void ModProfile()

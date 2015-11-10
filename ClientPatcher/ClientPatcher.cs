@@ -61,6 +61,7 @@ namespace ClientPatcher
     public delegate void ProgressDownloadEventHandler(object sender, DownloadProgressChangedEventArgs e);
     //Event when we Complete a Download, used to notify UI.
     public delegate void EndDownloadEventHandler(object sender, AsyncCompletedEventArgs e);
+    public delegate void FailDownloadHandler(object sender, InvalidOperationException e);
 
     #endregion
 
@@ -108,6 +109,12 @@ namespace ClientPatcher
         {
             if (EndedDownload != null)
                 EndedDownload(this, e);
+        }
+        public event FailDownloadHandler FailedDownload;
+        protected virtual void OnFailedDownload(InvalidOperationException e)
+        {
+           if (FailedDownload != null)
+              FailedDownload(this, e);
         }
         #endregion
 
@@ -324,6 +331,11 @@ Download=10016
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            if (e.Error is InvalidOperationException)
+            {
+                OnFailedDownload((InvalidOperationException)e.Error);
+                return;
+            }
             OnEndDownload(e);
             _continueAsync = true;
         }
