@@ -116,7 +116,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientPatcher.cs" />
+    <Compile Include="ClientPatcher\ClientPatcher.cs" />
     <Compile Include="ClientPatcher\ClassicClientPatcher.cs" />
     <Compile Include="ClientPatcher\OgreClientPatcher.cs" />
     <Compile Include="ClientPatchForm.cs">
@@ -128,7 +128,7 @@
     <Compile Include="PatcherSettings\ClassicPatcherSettings.cs" />
     <Compile Include="PatcherSettings\OgrePatcherSettings.cs" />
     <Compile Include="SettingsManager.cs" />
-    <Compile Include="PatcherSettings.cs" />
+    <Compile Include="PatcherSettings\PatcherSettings.cs" />
     <Compile Include="ClientPatcherProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ClientPatchForm.resx">
