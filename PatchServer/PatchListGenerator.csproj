@@ -84,7 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientScanner.cs" />
+    <Compile Include="ClientScanner\ClientScanner.cs" />
     <Compile Include="ClientScanner\ClassicClientScanner.cs" />
     <Compile Include="ClientScanner\OgreClientScanner.cs" />
     <Compile Include="ManagedFile.cs" />
