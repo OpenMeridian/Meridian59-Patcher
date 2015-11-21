@@ -13,7 +13,7 @@ namespace PatchListGenerator
        public OgreClientScanner()
            : base()
        {
-           ClientType = ClientType.DotNetX86;
+           ClientType = ClientType.DotNet;
            BasePath = "C:\\Games\\Meridian59-1.0.4.0\\";
        }
        public OgreClientScanner(string basepath)
@@ -27,8 +27,8 @@ namespace PatchListGenerator
        /// </summary>
        public override void AddExtensions()
        {
-          ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf",
-                ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compsoitor",
+          ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".bsf",
+                ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compositor",
                 ".imageset", ".layout", ".looknfeel", ".scheme" };
        }
     }
