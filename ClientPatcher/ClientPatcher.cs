@@ -191,34 +191,9 @@ namespace ClientPatcher
             
         }
 
-        private void CreateDefaultIni()
-        {
-            try
-            {
-                const string defaultIni = 
-@"[Comm]
-ServerNumber=103
-[Miscellaneous]
-UserName=username
-Download=10016
-";
-                using (var sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
-                {
-                    sw.Write(defaultIni);
-                }
-            }
-            catch (Exception e)
-            {
-
-                throw new IOException("Unable to CreateDefaultIni()" + e);
-            }
-            
-        }
-
         private void CreateNewClient()
         {
             CreateFolderStructure();
-            CreateDefaultIni();
             //TODO: Replace this with code to download an initial .zip of the client.
         }
 
