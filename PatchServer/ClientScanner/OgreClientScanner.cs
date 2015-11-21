@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PatchListGenerator
 {
-    class OgreClientScanner : ClientScanner
+    public class OgreClientScanner : ClientScanner
     {
        public ClientType ClientType { get; set; }
        public override String BasePath { get; set; }
