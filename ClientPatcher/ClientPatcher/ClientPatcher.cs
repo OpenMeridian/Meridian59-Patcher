@@ -162,6 +162,21 @@ namespace ClientPatcher
             }
         }
 
+        private void TestPath(string path)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                }
+                catch (Exception e)
+                {
+                    throw new IOException("Unable to TestPath()" + e);
+                }
+            }
+        }
+
         private bool IsNewClient()
         {
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.ini");
@@ -174,21 +189,8 @@ namespace ClientPatcher
 
         private void CreateFolderStructure()
         {
-            try
-            {
-                Directory.CreateDirectory(CurrentProfile.ClientFolder);
-                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\resource\\");
-                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\download\\");
-                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\help\\");
-                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\mail\\");
-                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\ads\\");
-            }
-            catch (Exception e)
-            {
-                
-                throw new IOException("Unable to CreateFolderStructure()" + e);
-            }
-            
+            TestPath(CurrentProfile.ClientFolder);
+
         }
 
         private void CreateNewClient()
@@ -319,8 +321,8 @@ namespace ClientPatcher
         public void DownloadOneFileAsync(ManagedFile file)
         {
            string temp = file.Basepath.Replace("\\", "/");
-           StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
-           DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename, file);
+            if (StartedDownload != null) StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+            DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename, file);
         }
 
         public void DownloadFilesAsync()
@@ -340,6 +342,7 @@ namespace ClientPatcher
 
         public void DownloadFileAsync(string url, string path, ManagedFile file)
         {
+            TestPath(path);
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", UserAgentString);
