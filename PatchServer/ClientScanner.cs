@@ -5,13 +5,18 @@ using Newtonsoft.Json;
 
 namespace PatchListGenerator
 {
+    /// <summary>
+    /// Signifies which version of the Meridian 59 Client we are working with
+    /// </summary>
     public enum ClientType
     {
         Classic = 0,
         DotNetX64 = 1,
         DotNetX86 = 2
     }
-
+    /// <summary>
+    /// ClientScanner is in charge of scanning a list of files and instantiating ManagedFile objects to track them with metadata.
+    /// </summary>
     public class ClientScanner
     {
         private List<string> ScanFiles { get; set; }
@@ -25,7 +30,6 @@ namespace PatchListGenerator
             string basepath = "C:\\Meridian59-master\\run\\localclient\\";
             ClientType = ClientType.Classic;
             ScannerSetup(basepath);
-            
         }
 
         public ClientScanner(string basepath)
@@ -52,7 +56,7 @@ namespace PatchListGenerator
                         break;
                     case ClientType.DotNetX64:
                         ScanFiles = new List<string>();
-                        ScanFiles.AddRange(DirSearch(basepath + "\\x64"));
+                        ScanFiles.AddRange(DirSearch(basepath + "\\x64")); //TODO: is this needed since DirSearch() is recursive?
                         ScanFiles.AddRange(DirSearch(basepath + "\\resources"));
                         AddDotNetExensions();
                         break;
@@ -66,7 +70,11 @@ namespace PatchListGenerator
         }
 
         
-
+        /// <summary>
+        /// Recursive function to get all files in a directory and sub-directories
+        /// </summary>
+        /// <param name="sDir"></param>
+        /// <returns></returns>
         private List<String> DirSearch(string sDir)
         {
             List<String> files = new List<String>();
@@ -89,18 +97,25 @@ namespace PatchListGenerator
             return files;
         }
 
+        /// <summary>
+        /// Adds the extensions of files to scan for when using Ogre3d/.NET Meridian Client
+        /// </summary>
         private void AddDotNetExensions()
         {
             ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf",
                 ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compsoitor",
                 ".imageset", ".layout", ".looknfeel", ".scheme" };
         }
-
+        /// <summary>
+        /// Adds the extensions of files to scan for when using the Classic/Legacy Meridian Client
+        /// </summary>
         private void AddLegacyExensions()
         {
             ScanExtensions = new List<string> {".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf"};
         }
-
+        /// <summary>
+        /// Scans each file in the ScanFiles property of the ClientScanner Class, ManagedFile objects are added to the Files property of the ClientScanner Class
+        /// </summary>
         public void ScanSource()
         {
             Files = new List<ManagedFile>();

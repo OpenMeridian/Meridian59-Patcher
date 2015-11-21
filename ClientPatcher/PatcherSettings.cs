@@ -3,6 +3,9 @@ using PatchListGenerator;
 
 namespace ClientPatcher
 {
+    /// <summary>
+    /// A set of settings about a specific Meridian 59 Server
+    /// </summary>
     public class PatcherSettings
     {
         public string ServerName { get; set; }     //What do we call this profile?

@@ -6,7 +6,9 @@ using Newtonsoft.Json;
 
 namespace PatchListGenerator
 {
-
+    /// <summary>
+    /// ManagedFiles are files that can compute their own hash, parse their own path, and read other metadata from themselves, such as size.
+    /// </summary>
     public class ManagedFile
     {
         [JsonIgnore]
@@ -30,7 +32,9 @@ namespace PatchListGenerator
             Filepath = filepath;
             ParseFilePath();
         }
-
+        /// <summary>
+        /// Pulls out the file path and name, adds Beasepath(relative) metadata
+        /// </summary>
         public void ParseFilePath()
         {
             Path = System.IO.Path.GetDirectoryName(Filepath);
@@ -38,7 +42,9 @@ namespace PatchListGenerator
             if (Filepath.Contains("resource"))
                 Basepath = "\\resource\\";
         }
-
+        /// <summary>
+        /// We compute an MD5 hash of ourselves using the firs 64 bytes of the file and metadata and save it in the MyHash property
+        /// </summary>
         public void ComputeHash()
         {
             //We're going to read the first 64 bytes or so of the file, salt it with the filename, and coompute a MD5 hash.
@@ -68,7 +74,11 @@ namespace PatchListGenerator
 
             MyHash = ByteArrayToString(md5.ComputeHash(hashableBytes));
         }
-
+        /// <summary>
+        /// Utility function
+        /// </summary>
+        /// <param name="bytearray"></param>
+        /// <returns></returns>
         private string ByteArrayToString(byte[] bytearray)
         {
             string hex = BitConverter.ToString(bytearray);
@@ -84,7 +94,9 @@ namespace PatchListGenerator
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
-
+        /// <summary>
+        /// Fill file-length metadata
+        /// </summary>
         public void FillLength()
         {
             var file = new FileInfo(Filepath);
