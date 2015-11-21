@@ -41,10 +41,7 @@ namespace PatchListGenerator
                             case "classic":
                                 clientscanner = new ClassicClientScanner(_clientPath);
                                 break;
-                            case "dotnetx86":
-                                clientscanner = new OgreClientScanner(_clientPath);
-                                break;
-                            case  "dotnetx64":
+                            case "dotnet":
                                 clientscanner = new OgreClientScanner(_clientPath);
                                 break;
                             default:
@@ -88,7 +85,7 @@ namespace PatchListGenerator
             Console.WriteLine("Not enough parameters");
             Console.WriteLine("--client=[path] - Base folder to scan for patch info");
             Console.WriteLine("--outfile=[path] - File to store patch info in");
-            Console.WriteLine("--type=[classic|DotNetX86|DotNetX64]");
+            Console.WriteLine("--type=[classic|dotnet]");
         }
     }
 }

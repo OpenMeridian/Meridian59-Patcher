@@ -11,8 +11,7 @@ namespace PatchListGenerator
     public enum ClientType
     {
         Classic = 0,
-        DotNetX64 = 1,
-        DotNetX86 = 2
+        DotNet = 1,
     }
     /// <summary>
     /// ClientScanner is in charge of scanning a list of files and instantiating ManagedFile objects to track them with metadata.
@@ -75,7 +74,7 @@ namespace PatchListGenerator
             Files = new List<ManagedFile>();
             foreach (string fileName in ScanFiles)
             {
-                string ext = fileName.Substring(fileName.Length - 4).ToLower();
+                string ext = Path.GetExtension(fileName).ToLower();
                 if (ScanExtensions.Contains(ext))
                 {
                     var file = new ManagedFile(fileName);
