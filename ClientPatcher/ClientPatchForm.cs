@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Deployment.Application;
-using System.Globalization;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Windows.Forms;
+using Awesomium.Core;
 using Awesomium.Windows.Forms;
 using PatchListGenerator;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
-using System.Deployment;
-using PatchListGenerator;
 
 namespace ClientPatcher
 {
@@ -80,7 +80,7 @@ namespace ClientPatcher
                     string shortcutName =
                         string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
                         "\\", company, "\\", description, ".appref-ms");
-                    System.IO.File.Copy(shortcutName, desktopPath, true);
+                    File.Copy(shortcutName, desktopPath, true);
 
                 }
             }
@@ -181,15 +181,10 @@ namespace ClientPatcher
                     rbDotNetX64.Checked = false;
                     rbDotNetX86.Checked = false;
                     break;
-                case ClientType.DotNetX64:
+                case ClientType.DotNet:
                     rbClassic.Checked = false;
                     rbDotNetX64.Checked = true;
                     rbDotNetX86.Checked = false;
-                    break;
-                case ClientType.DotNetX86:
-                    rbClassic.Checked = false;
-                    rbDotNetX64.Checked = false;
-                    rbDotNetX86.Checked = true;
                     break;
             }
             _changetype = ChangeType.ModProfile;
@@ -202,11 +197,11 @@ namespace ClientPatcher
                     ClientType clientType = ClientType.Classic;
                     if (rbDotNetX64.Checked)
                     {
-                        clientType = ClientType.DotNetX64;
+                        clientType = ClientType.DotNet;
                     }
                     if (rbDotNetX86.Checked)
                     {
-                        clientType = ClientType.DotNetX86;
+                        clientType = ClientType.DotNet;
                     }
                     _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text,txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
                     groupProfileSettings.Enabled = false;
@@ -276,11 +271,11 @@ namespace ClientPatcher
             ClientType clientType = ClientType.Classic;
             if (rbDotNetX64.Checked)
             {
-                clientType = ClientType.DotNetX64;
+                clientType = ClientType.DotNet;
             }
             if (rbDotNetX86.Checked)
             {
-                clientType = ClientType.DotNetX86;
+                clientType = ClientType.DotNet;
             }
             _settings.Servers[selected].ClientType = clientType;
             _changetype = ChangeType.None;
@@ -453,12 +448,12 @@ namespace ClientPatcher
             tabControl1.SelectTab(0);
         }
 
-        private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
+        private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, DocumentReadyEventArgs e)
         {
             //TxtLogAppendText(webControl.HTML);
         }
 
-        private void Awesomium_Windows_Forms_WebControl_ShowCreatedWebView(object sender, Awesomium.Core.ShowCreatedWebViewEventArgs e)
+        private void Awesomium_Windows_Forms_WebControl_ShowCreatedWebView(object sender, ShowCreatedWebViewEventArgs e)
         {
             WebControl webControl = sender as WebControl;
             if (webControl == null)

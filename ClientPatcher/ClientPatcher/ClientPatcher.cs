@@ -1,13 +1,13 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using Newtonsoft.Json;
 using PatchListGenerator;
-using System.IO;
-using System.ComponentModel;
-using System.Threading;
+using Shell32;
 
 namespace ClientPatcher
 {
@@ -66,7 +66,7 @@ namespace ClientPatcher
 
     #endregion
 
-    class ClientPatcher
+    abstract class ClientPatcher
     {
         const string CacheFile = "\\cache.txt";
         private const string UserAgentString = "Mozilla/4.0 (compatible; .NET CLR 4.0.;) OpenMeridianPatcher v1.4";
@@ -177,10 +177,6 @@ namespace ClientPatcher
             }
         }
 
-        private bool IsNewClient()
-        {
-            return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.ini");
-        }
 
         public bool HasCache()
         {
@@ -207,15 +203,17 @@ namespace ClientPatcher
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
-            Shell32.Shell objShell = new Shell32.Shell();
-            Shell32.Folder destinationFolder = objShell.NameSpace(folderPath);
-            Shell32.Folder sourceFile = objShell.NameSpace(zipFile);
+            Shell objShell = new Shell();
+            Folder destinationFolder = objShell.NameSpace(folderPath);
+            Folder sourceFile = objShell.NameSpace(zipFile);
 
             foreach (var file in sourceFile.Items())
             {
                 destinationFolder.CopyHere(file, 4 | 16);
             }
         }
+
+        protected abstract bool IsNewClient();
 
         public void ScanClient()
         {

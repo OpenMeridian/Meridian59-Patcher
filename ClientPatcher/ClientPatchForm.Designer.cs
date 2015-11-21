@@ -1,11 +1,15 @@
-﻿namespace ClientPatcher
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using Awesomium.Windows.Forms;
+
+namespace ClientPatcher
 {
     partial class ClientPatchForm
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -493,45 +497,45 @@
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar pbProgress;
-        private System.Windows.Forms.Button btnPlay;
-        private System.Windows.Forms.ComboBox ddlServer;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnPatch;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.GroupBox groupProfileSettings;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.CheckBox cbDefaultServer;
-        private System.Windows.Forms.TextBox txtPatchBaseURL;
-        private System.Windows.Forms.TextBox txtClientFolder;
-        private System.Windows.Forms.TextBox txtPatchInfoURL;
-        private System.Windows.Forms.TextBox txtServerName;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.TextBox txtLog;
-        private System.Windows.Forms.ProgressBar pbFileProgress;
-        private System.ComponentModel.BackgroundWorker bgScanWorker;
-        private System.ComponentModel.BackgroundWorker bgDownloadWorker;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabLog;
-        private System.Windows.Forms.TabPage tabOptions;
-        private System.Windows.Forms.TabPage tabBrowser;
-        private Awesomium.Windows.Forms.WebControl webControl;
-        private System.Windows.Forms.Button btnCreateAccount;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnStartModify;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnCacheGen;
-        private System.Windows.Forms.RadioButton rbDotNetX64;
-        private System.Windows.Forms.RadioButton rbDotNetX86;
-        private System.Windows.Forms.RadioButton rbClassic;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtFullInstallURL;
+        private ProgressBar pbProgress;
+        private Button btnPlay;
+        private ComboBox ddlServer;
+        private Label label2;
+        private Button btnPatch;
+        private Label label3;
+        private GroupBox groupProfileSettings;
+        private Label label8;
+        private Label label7;
+        private Label label6;
+        private Label label5;
+        private CheckBox cbDefaultServer;
+        private TextBox txtPatchBaseURL;
+        private TextBox txtClientFolder;
+        private TextBox txtPatchInfoURL;
+        private TextBox txtServerName;
+        private Button btnSave;
+        private Button btnBrowse;
+        private TextBox txtLog;
+        private ProgressBar pbFileProgress;
+        private BackgroundWorker bgScanWorker;
+        private BackgroundWorker bgDownloadWorker;
+        private TabControl tabControl1;
+        private TabPage tabLog;
+        private TabPage tabOptions;
+        private TabPage tabBrowser;
+        private WebControl webControl;
+        private Button btnCreateAccount;
+        private GroupBox groupBox1;
+        private Button btnStartModify;
+        private Button btnRemove;
+        private Button btnAdd;
+        private Label label1;
+        private Button btnCacheGen;
+        private RadioButton rbDotNetX64;
+        private RadioButton rbDotNetX86;
+        private RadioButton rbClassic;
+        private Label label4;
+        private TextBox txtFullInstallURL;
     }
 }
 

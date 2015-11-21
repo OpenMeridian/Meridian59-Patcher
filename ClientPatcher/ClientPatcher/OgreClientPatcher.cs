@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace ClientPatcher
 {
     class OgreClientPatcher : ClientPatcher
     {
+        private bool IsNewClient()
+        {
+            return !File.Exists(CurrentProfile.ClientFolder + "\\x86\\Meridian59.Ogre.Client.exe");
+        }
+
     }
 }

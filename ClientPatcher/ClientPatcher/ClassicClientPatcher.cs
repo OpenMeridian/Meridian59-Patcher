@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace ClientPatcher
 {
     class ClassicClientPatcher : ClientPatcher
     {
+        private bool IsNewClient()
+        {
+            return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.exe");
+        }
+
     }
 }

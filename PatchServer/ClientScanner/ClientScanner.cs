@@ -58,7 +58,7 @@ namespace PatchListGenerator
                     files.AddRange(DirSearch(d));
                 }
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using Newtonsoft.Json;
-using System.IO;
-using System.Security.AccessControl;
-using System.Net;
 using PatchListGenerator;
 
 namespace ClientPatcher
