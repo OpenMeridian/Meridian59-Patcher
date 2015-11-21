@@ -7,8 +7,7 @@ namespace PatchListGenerator
     {
         static string _jsonOutputPath;
         static string _clientPath;
-        private static ClientType _clientType = ClientType.Classic;
-        
+
         static void Main(string[] args)
         {
             /*
@@ -24,7 +23,7 @@ namespace PatchListGenerator
             }
 
             char[] delim = { '=' };
-
+            ClientScanner clientscanner = new ClientScanner();
             foreach (string argument in args)
             {
                 string[] param = argument.Split(delim);
@@ -40,13 +39,13 @@ namespace PatchListGenerator
                         switch (param[1].ToLower())
                         {
                             case "classic":
-                                _clientType = ClientType.Classic;
+                                clientscanner = new ClassicClientScanner(_clientPath);
                                 break;
                             case "dotnetx86":
-                                _clientType = ClientType.DotNetX86;
+                                clientscanner = new OgreClientScanner(_clientPath);
                                 break;
                             case  "dotnetx64":
-                                _clientType = ClientType.DotNetX64;
+                                clientscanner = new OgreClientScanner(_clientPath);
                                 break;
                             default:
                                 DisplaySyntax();
@@ -70,11 +69,9 @@ namespace PatchListGenerator
             Console.WriteLine("Scan Folder: {0}", _clientPath);
             Console.WriteLine("Output File: {0}", _jsonOutputPath);
 
-            var clientscanner = new ClientScanner(_clientPath,_clientType);
-
             Console.WriteLine("Scanning...");
             //Creates list of latest file hashes
-            
+            clientscanner.ScannerSetup(_clientPath);
             clientscanner.ScanSource();
             Console.WriteLine("Scanned {0} Files", clientscanner.Files.Count);
 

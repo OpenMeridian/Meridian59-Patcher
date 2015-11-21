@@ -20,56 +20,26 @@ namespace PatchListGenerator
     public class ClientScanner
     {
         private List<string> ScanFiles { get; set; }
-        private List<string> ScanExtensions { get; set; }
+        public List<string> ScanExtensions { get; set; }
         public List<ManagedFile> Files { get; set; }
-        public string BasePath { get; set; }
-        public ClientType ClientType { get; set; }
+        public virtual string BasePath { get; set; }
         
         public ClientScanner()
         {
-            string basepath = "C:\\Meridian59-master\\run\\localclient\\";
-            ClientType = ClientType.Classic;
-            ScannerSetup(basepath);
         }
 
         public ClientScanner(string basepath)
         {
-            ClientType = ClientType.Classic;
-            ScannerSetup(basepath);
-        }
-
-        public ClientScanner(string basepath, ClientType clientType)
-        {
-            ClientType = clientType;
-            ScannerSetup(basepath);
             BasePath = basepath;
         }
 
-        private void ScannerSetup(string basepath)
+        public virtual void AddExtensions() { }
+        public void ScannerSetup(string basepath)
         {
-            switch (ClientType)
-            {
-                    case ClientType.Classic:
-                        AddLegacyExensions();
-                        ScanFiles = new List<string>();
-                        ScanFiles.AddRange(DirSearch(basepath));
-                        break;
-                    case ClientType.DotNetX64:
-                        ScanFiles = new List<string>();
-                        ScanFiles.AddRange(DirSearch(basepath + "\\x64")); //TODO: is this needed since DirSearch() is recursive?
-                        ScanFiles.AddRange(DirSearch(basepath + "\\resources"));
-                        AddDotNetExensions();
-                        break;
-                    case ClientType.DotNetX86:
-                        ScanFiles = new List<string>();
-                        ScanFiles.AddRange(DirSearch(basepath + "\\x86"));
-                        ScanFiles.AddRange(DirSearch(basepath + "\\resources"));
-                        AddDotNetExensions();
-                        break;
-            }
+            AddExtensions();
+            ScanFiles = new List<string>();
+            ScanFiles.AddRange(DirSearch(basepath));
         }
-
-        
         /// <summary>
         /// Recursive function to get all files in a directory and sub-directories
         /// </summary>
@@ -97,22 +67,6 @@ namespace PatchListGenerator
             return files;
         }
 
-        /// <summary>
-        /// Adds the extensions of files to scan for when using Ogre3d/.NET Meridian Client
-        /// </summary>
-        private void AddDotNetExensions()
-        {
-            ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf",
-                ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compsoitor",
-                ".imageset", ".layout", ".looknfeel", ".scheme" };
-        }
-        /// <summary>
-        /// Adds the extensions of files to scan for when using the Classic/Legacy Meridian Client
-        /// </summary>
-        private void AddLegacyExensions()
-        {
-            ScanExtensions = new List<string> {".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf"};
-        }
         /// <summary>
         /// Scans each file in the ScanFiles property of the ClientScanner Class, ManagedFile objects are added to the Files property of the ClientScanner Class
         /// </summary>
