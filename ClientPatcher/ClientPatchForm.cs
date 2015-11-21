@@ -42,6 +42,7 @@ namespace ClientPatcher
 
             _settings = new SettingsManager();
             _settings.LoadSettings();
+            _settings.Refresh();
             _settings.SaveSettings();
 
             ClientType ct = _settings.GetDefault().ClientType;
