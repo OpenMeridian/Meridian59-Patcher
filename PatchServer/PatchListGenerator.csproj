@@ -85,6 +85,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientScanner.cs" />
+    <Compile Include="ClientScanner\ClassicClientScanner.cs" />
+    <Compile Include="ClientScanner\OgreClientScanner.cs" />
     <Compile Include="ManagedFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

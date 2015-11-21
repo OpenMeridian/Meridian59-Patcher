@@ -117,6 +117,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientPatcher.cs" />
+    <Compile Include="ClientPatcher\ClassicClientPatcher.cs" />
+    <Compile Include="ClientPatcher\OgreClientPatcher.cs" />
     <Compile Include="ClientPatchForm.cs">
       <SubType>Form</SubType>
     </Compile>
