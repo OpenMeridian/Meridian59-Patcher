@@ -125,6 +125,8 @@
     <Compile Include="ClientPatchForm.Designer.cs">
       <DependentUpon>ClientPatchForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PatcherSettings\ClassicPatcherSettings.cs" />
+    <Compile Include="PatcherSettings\OgrePatcherSettings.cs" />
     <Compile Include="SettingsManager.cs" />
     <Compile Include="PatcherSettings.cs" />
     <Compile Include="ClientPatcherProgram.cs" />
