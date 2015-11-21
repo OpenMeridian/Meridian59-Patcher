@@ -4,7 +4,13 @@ namespace ClientPatcher
 {
     class ClassicClientPatcher : ClientPatcher
     {
-        private bool IsNewClient()
+        public ClassicClientPatcher(PatcherSettings settings)
+            : base(settings)
+        {
+                
+        }
+
+        protected override bool IsNewClient()
         {
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.exe");
         }

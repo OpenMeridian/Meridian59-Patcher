@@ -44,7 +44,18 @@ namespace ClientPatcher
             _settings.LoadSettings();
             _settings.SaveSettings();
 
-            _patcher = new ClientPatcher(_settings.GetDefault());
+            ClientType ct = _settings.GetDefault().ClientType;
+            switch (ct)
+            {
+                case ClientType.Classic:
+                    _patcher = new ClassicClientPatcher(_settings.GetDefault());
+                    break;
+                case ClientType.DotNet:
+                    _patcher = new OgreClientPatcher(_settings.GetDefault());
+                    break;
+
+            }
+            
             _patcher.FileScanned += Patcher_FileScanned;
             _patcher.StartedDownload += Patcher_StartedDownload;
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;

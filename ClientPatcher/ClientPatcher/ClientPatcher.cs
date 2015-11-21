@@ -186,7 +186,6 @@ namespace ClientPatcher
         private void CreateFolderStructure()
         {
             TestPath(CurrentProfile.ClientFolder);
-
         }
 
         private void CreateNewClient()
