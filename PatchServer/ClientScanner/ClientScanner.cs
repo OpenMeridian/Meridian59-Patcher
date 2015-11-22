@@ -78,7 +78,7 @@ namespace PatchListGenerator
                 if (ScanExtensions.Contains(ext))
                 {
                     var file = new ManagedFile(fileName);
-                    file.Basepath = fileName.Substring(BasePath.Length);
+                    file.Basepath = fileName.Substring(BasePath.Length,(fileName.Length - BasePath.Length - Path.GetFileName(fileName).Length));
                     file.ComputeHash();
                     file.FillLength();
                     Files.Add(file);
