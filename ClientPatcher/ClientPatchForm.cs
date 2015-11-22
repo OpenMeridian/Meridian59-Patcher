@@ -21,95 +21,76 @@ namespace ClientPatcher
 
     public partial class ClientPatchForm : Form
     {
-
         SettingsManager _settings;
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
 
         public bool showFileNames = false;
 
-
         public ClientPatchForm()
         {
             InitializeComponent();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            // Create Patcher shortcut on user's desktop if not already present.
             CheckForShortcut();
 
             btnPlay.Enabled = false;
 
+            // Load current settings.txt. TODO: Refresh() seems to do all 3 of these things.
             _settings = new SettingsManager();
             _settings.LoadSettings();
             _settings.Refresh();
             _settings.SaveSettings();
 
-            ClientType ct = _settings.GetDefault().ClientType;
+            // Get the default profile settings.
+            PatcherSettings ps = _settings.GetDefault();
+
+            // Load the type of client patcher we need for scanning the default profile.
+            ClientType ct = ps.ClientType;
             switch (ct)
             {
                 case ClientType.Classic:
-                    _patcher = new ClassicClientPatcher(_settings.GetDefault());
+                    _patcher = new ClassicClientPatcher(ps);
                     break;
                 case ClientType.DotNet:
-                    _patcher = new OgreClientPatcher(_settings.GetDefault());
+                    _patcher = new OgreClientPatcher(ps);
                     break;
-
             }
-            
+
+            // Add event handlers.
             _patcher.FileScanned += Patcher_FileScanned;
             _patcher.StartedDownload += Patcher_StartedDownload;
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
-
-            btnCreateAccount.Text = String.Format("Create Account for {0}",_patcher.CurrentProfile.ServerName);
             _patcher.FailedDownload += Patcher_FailedDownload;
+
+            // Set the create account button to display "create account" text.
+            SetCreateAccountText(_patcher.CurrentProfile);
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
                 Version myVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
                 Text += string.Concat("- Version: v", myVersion);
             }
-                
 
+            // Make sure the default is our current selection, and the data is displayed in options.
             RefreshDdl();
+            SetPatcherProfile(ps);
         }
 
-
-        void CheckForShortcut()
-        {
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
-                if (ad.IsFirstRun)  //first time user has run the app
-                {
-                    string company = "OpenMeridian";
-                    string description = "Open Meridian Patch and Client Management";
-
-                    string desktopPath =
-                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                        "\\", description, ".appref-ms");
-                    string shortcutName =
-                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
-                        "\\", company, "\\", description, ".appref-ms");
-                    File.Copy(shortcutName, desktopPath, true);
-
-                }
-            }
-        }
-
-        private void btnPlay_Click(object sender, EventArgs e)
-        {
-            LaunchProfile();
-        }
-
+        /// <summary>
+        /// Launches the Meridian client for the selected profile.
+        /// </summary>
         private void LaunchProfile()
         {
             var meridian = new ProcessStartInfo
             {
                 FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
                 WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\",
-                
+
                 //TODO: add ability to enter username and password during patching
                 //meridian.Arguments = "/U:username /P:password /H:host";
             };
@@ -119,63 +100,37 @@ namespace ClientPatcher
             webControl.Dispose();
             Environment.Exit(1);
         }
-        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
+
+        #region MainButtonClicked
+        private void btnPlay_Click(object sender, EventArgs e)
         {
-            //lblStatus.Text = ddlServer.SelectedItem.ToString();
-            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
-
-            if (selected == null) return;
-            _patcher.CurrentProfile = selected;
-            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
-            btnPlay.Enabled = false;
-
-            webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
-            btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
-            _creatingAccount = false;
-
-            if (groupProfileSettings.Enabled != true) return;
-            groupProfileSettings.Enabled = false;
-            txtClientFolder.Text = "";
-            txtPatchBaseURL.Text = "";
-            txtPatchInfoURL.Text = "";
-            txtServerName.Text = "";
-            cbDefaultServer.Checked = false;
+            LaunchProfile();
         }
-
-        private void CheckMeridianRunning()
-        {
-           Process[] processlist = Process.GetProcessesByName("meridian");
-           if (processlist.Length != 0)
-           {
-              foreach (Process process in processlist)
-              {
-                 if (process.Modules[0].FileName.ToLower() ==
-                     (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
-                 {
-                    process.Kill();
-                    MessageBox.Show("Warning! You must have Meridian closed in order to patch successfully!",
-                        "Meridian Already Running!!", MessageBoxButtons.OK);
-                 }
-              }
-           }
-        }
-
         private void btnPatch_Click(object sender, EventArgs e)
         {
-           PatchProfile();
+            PatchProfile();
         }
+        #endregion
 
-        private void PatchProfile()
-        {
-           CheckMeridianRunning();
-           StartScan();
-        }
-
+        #region OptionsButtonClicked
+        /// <summary>
+        /// Add a new profile.
+        /// </summary>
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            if (_changetype == ChangeType.AddProfile)
+                return;
             groupProfileSettings.Enabled = true;
+
+            // Clear data fields, if not already adding
+            SetProfileDataFields(null);
             _changetype = ChangeType.AddProfile;
         }
+
+        /// <summary>
+        /// Modify the current profile. TODO: Moving out of options or clicking out of modify
+        /// should ask if you want to save or discard any changes.
+        /// </summary>
         private void btnStartModify_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
@@ -189,6 +144,10 @@ namespace ClientPatcher
 
             _changetype = ChangeType.ModProfile;
         }
+
+        /// <summary>
+        /// Save the current profile TODO: split this off so it can be called separately.
+        /// </summary>
         private void btnSave_Click(object sender, EventArgs e)
         {
             switch (_changetype)
@@ -196,7 +155,7 @@ namespace ClientPatcher
                 case ChangeType.AddProfile:
                     ClientType clientType = ClientType.Classic;
 
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text,txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
                     groupProfileSettings.Enabled = false;
                     break;
                 case ChangeType.ModProfile:
@@ -207,6 +166,10 @@ namespace ClientPatcher
             groupProfileSettings.Enabled = false;
             _changetype = ChangeType.None;
         }
+
+        /// <summary>
+        /// Delete a profile. Loads the default profile afterwards..
+        /// </summary>
         private void btnRemove_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -215,8 +178,13 @@ namespace ClientPatcher
                 _settings.Servers.RemoveAt(selected);
                 _settings.SaveSettings();
                 _settings.LoadSettings();
+                SetPatcherProfile(_settings.GetDefault());
             }
         }
+
+        /// <summary>
+        /// Browse for a folder location.
+        /// </summary>
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             var fbd = new FolderBrowserDialog();
@@ -224,34 +192,84 @@ namespace ClientPatcher
             txtClientFolder.Text = fbd.SelectedPath;
         }
 
-        private void Patcher_FileScanned(object sender, ScanEventArgs e)
+        /// <summary>
+        /// Clear the cache, close Meridian and start a scan. TODO: should call StartScan() instead of PatchProfile()?
+        /// </summary>
+        private void btnCacheGen_Click(object sender, EventArgs e)
         {
-            PbProgressPerformStep();
-            if (showFileNames)
-                TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
+            TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
+            groupProfileSettings.Enabled = false;
+            _changetype = ChangeType.None;
+            tabControl1.SelectTab(1);
+            _patcher.GenerateCache();
+            PatchProfile();
+            TxtLogAppendText("Caching Complete!\r\n");
         }
-        private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
+        #endregion
+
+        #region Profiles
+        /// <summary>
+        /// Handles user changing which profile is selected.
+        /// </summary>
+        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            PbProgressPerformStep();
-            TxtLogAppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString(CultureInfo.InvariantCulture)));
-            pbFileProgress.Maximum = 100;
-            PbFileProgressSetValueStep(0);
-        }
-        private void Patcher_ProgressedDownload(object sender, DownloadProgressChangedEventArgs e)
-        {
-            PbFileProgressSetValueStep(e.ProgressPercentage);
-        }
-        private void Patcher_EndedDownload(object sender, AsyncCompletedEventArgs e)
-        {
-            PbFileProgressSetValueStep(100);
-        }
-        private void Patcher_FailedDownload(object sender, AsyncCompletedEventArgs e)
-        {
-            ManagedFile file = (ManagedFile)e.UserState;
-            TxtLogAppendText(String.Format("Failed to download file {0}\r\n", file.Filename));
-            CheckMeridianRunning();
+            //lblStatus.Text = ddlServer.SelectedItem.ToString();
+            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
+            SetPatcherProfile(selected);
         }
 
+        /// <summary>
+        /// Selected a new profile.
+        /// </summary>
+        private void SetPatcherProfile(PatcherSettings profile)
+        {
+            // Don't set to null profile.
+            if (profile == null)
+                return;
+
+            _patcher.CurrentProfile = profile;
+            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", profile.ServerName, profile.ClientFolder);
+            btnPlay.Enabled = false;
+
+            //webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
+
+            // Set create account text.
+            SetCreateAccountText(_patcher.CurrentProfile);
+            _creatingAccount = false;
+
+            //if (groupProfileSettings.Enabled != true) return;
+            groupProfileSettings.Enabled = false;
+            // Set the Options tab data fields to the current selection.
+            SetProfileDataFields(profile);
+            cbDefaultServer.Checked = profile.Default;
+        }
+
+        /// <summary>
+        /// Fills out the Options tab data fields when a new profile is selected.
+        /// </summary>
+        private void SetProfileDataFields(PatcherSettings profile)
+        {
+            if (profile == null)
+            {
+                txtClientFolder.Text = "";
+                txtPatchBaseURL.Text = "";
+                txtPatchInfoURL.Text = "";
+                txtFullInstallURL.Text = "";
+                txtServerName.Text = "";
+            }
+            else
+            {
+                txtClientFolder.Text = profile.ClientFolder;
+                txtPatchBaseURL.Text = profile.PatchBaseUrl;
+                txtPatchInfoURL.Text = profile.PatchInfoUrl;
+                txtFullInstallURL.Text = profile.FullInstallUrl;
+                txtServerName.Text = profile.ServerName;
+            }
+        }
+
+        /// <summary>
+        /// Allows modifying the current profile selection.
+        /// </summary>
         private void ModProfile()
         {
             int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
@@ -266,6 +284,10 @@ namespace ClientPatcher
             _settings.SaveSettings();
             _settings.LoadSettings();
         }
+
+        /// <summary>
+        /// Refreshes the profile selection to default.
+        /// </summary>
         private void RefreshDdl()
         {
             foreach (PatcherSettings profile in _settings.Servers)
@@ -275,6 +297,22 @@ namespace ClientPatcher
                     ddlServer.SelectedItem = profile.ServerName;
             }
         }
+        #endregion
+
+        #region Scanning
+        private void PatchProfile()
+        {
+            CheckMeridianRunning();
+            StartScan();
+        }
+
+        private void Patcher_FileScanned(object sender, ScanEventArgs e)
+        {
+            PbProgressPerformStep();
+            if (showFileNames)
+                TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
+        }
+
         private void StartScan()
         {
             btnPatch.Enabled = false;
@@ -305,6 +343,7 @@ namespace ClientPatcher
                 btnPatch.Enabled = true;
             }
         }
+
         private void PostScan()
         {
             if (_patcher.downloadFiles.Count > 0)
@@ -317,6 +356,34 @@ namespace ClientPatcher
             else
                 PostDownload();
         }
+        #endregion
+
+        #region Patching
+        private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
+        {
+            PbProgressPerformStep();
+            TxtLogAppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString(CultureInfo.InvariantCulture)));
+            pbFileProgress.Maximum = 100;
+            PbFileProgressSetValueStep(0);
+        }
+
+        private void Patcher_ProgressedDownload(object sender, DownloadProgressChangedEventArgs e)
+        {
+            PbFileProgressSetValueStep(e.ProgressPercentage);
+        }
+
+        private void Patcher_EndedDownload(object sender, AsyncCompletedEventArgs e)
+        {
+            PbFileProgressSetValueStep(100);
+        }
+
+        private void Patcher_FailedDownload(object sender, AsyncCompletedEventArgs e)
+        {
+            ManagedFile file = (ManagedFile)e.UserState;
+            TxtLogAppendText(String.Format("Failed to download file {0}\r\n", file.Filename));
+            CheckMeridianRunning();
+        }
+
         private void PostDownload()
         {
             pbProgress.Value = pbProgress.Maximum;
@@ -332,7 +399,7 @@ namespace ClientPatcher
             _patcher.SavePatchAsCache();
             btnPlay.Enabled = true;
         }
-        
+        #endregion
 
         #region bgScanWorker
         private void bgScanWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -345,6 +412,7 @@ namespace ClientPatcher
             PostScan();
         }
         #endregion
+
         #region bgDownloadWorker
         private void bgDownloadWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -357,6 +425,7 @@ namespace ClientPatcher
             PostDownload();
         }
         #endregion
+
         #region ThreadSafe Control Updates
         //Used to update main progress bar, one step
         delegate void ProgressPerformStepCallback();
@@ -402,17 +471,7 @@ namespace ClientPatcher
         }
         #endregion
 
-        private void btnCacheGen_Click(object sender, EventArgs e)
-        {
-            TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
-            groupProfileSettings.Enabled = false;
-            _changetype = ChangeType.None;
-            tabControl1.SelectTab(1);
-            _patcher.GenerateCache();
-            PatchProfile();
-            TxtLogAppendText("Caching Complete!\r\n");
-        }
-
+        #region AccountCreation
         private bool _creatingAccount;
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
@@ -426,11 +485,20 @@ namespace ClientPatcher
             else
             {
                 webControl.Source = new Uri("http://openmeridian.org/forums/latestnews.php");
-                btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
+                SetCreateAccountText(_patcher.CurrentProfile);
                 _creatingAccount = false;
             }
             tabControl1.SelectTab(0);
         }
+
+        /// <summary>
+        /// Display create account text for the current profile.
+        /// </summary>
+        private void SetCreateAccountText(PatcherSettings ps)
+        {
+            btnCreateAccount.Text = String.Format("Create Account for {0}", ps.ServerName);
+        }
+        #endregion
 
         private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, DocumentReadyEventArgs e)
         {
@@ -447,5 +515,47 @@ namespace ClientPatcher
                 return;
             webControl.Source = e.TargetURL;
         }
+
+        #region Util
+        void CheckForShortcut()
+        {
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                if (ad.IsFirstRun)  //first time user has run the app
+                {
+                    string company = "OpenMeridian";
+                    string description = "Open Meridian Patch and Client Management";
+
+                    string desktopPath =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        "\\", description, ".appref-ms");
+                    string shortcutName =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+                        "\\", company, "\\", description, ".appref-ms");
+                    File.Copy(shortcutName, desktopPath, true);
+
+                }
+            }
+        }
+
+        private void CheckMeridianRunning()
+        {
+            Process[] processlist = Process.GetProcessesByName("meridian");
+            if (processlist.Length != 0)
+            {
+                foreach (Process process in processlist)
+                {
+                    if (process.Modules[0].FileName.ToLower() ==
+                        (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
+                    {
+                        process.Kill();
+                        MessageBox.Show("Warning! You must have Meridian closed in order to patch successfully!",
+                            "Meridian Already Running!!", MessageBoxButtons.OK);
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
