@@ -167,10 +167,22 @@ namespace ClientPatcher
             return Servers.Find(x => x.ServerName == name);
         }
 
+        /// <summary>
+        /// Get default profile. If there isn't one for some reason,
+        /// set the first profile to default and return it.
+        /// </summary>
         public PatcherSettings GetDefault()
         {
-            return Servers.Find(x => x.Default);
+            PatcherSettings ps = Servers.Find(x => x.Default);
+            if (ps == null)
+            {
+                ps = Servers.First();
+                ps.Default = true;
+            }
+
+            return ps;
         }
+
         /// <summary>
         /// Sets proper NTFS permissions for the patcher to operate
         /// </summary>
