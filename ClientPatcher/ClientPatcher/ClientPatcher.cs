@@ -185,13 +185,37 @@ namespace ClientPatcher
 
         private void CreateFolderStructure()
         {
-            TestPath(CurrentProfile.ClientFolder);
+            TestPath(CurrentProfile.ClientFolder + "\\");
         }
 
         private void CreateNewClient()
         {
+            var wc = new WebClient();
+            wc.Headers.Add("user-agent", UserAgentString);
+            
             CreateFolderStructure();
-            //TODO: Replace this with code to download an initial .zip of the client.
+
+            ManagedFile file = new ManagedFile(Path.GetFileName(CurrentProfile.FullInstallUrl));
+
+            // TODO: Where do we get the hash and size from?
+            file.Length = 493663553;
+            file.MyHash = "54238DFC713DC5A7EA4ED0CB6D25C91D";
+
+            try
+            {
+                if (StartedDownload != null)
+                    StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+
+                wc.DownloadFile(CurrentProfile.FullInstallUrl, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                
+                UnZip(CurrentProfile.ClientFolder + file.Basepath + file.Filename, CurrentProfile.ClientFolder + file.Basepath);
+                File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("WebException Handler: {0}", e);
+                return;
+            }
         }
 
         public void UnZip(string zipFile, string folderPath)
