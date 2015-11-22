@@ -41,6 +41,8 @@ namespace ClientPatcher
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtFullInstallURL = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCacheGen = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -68,11 +70,6 @@ namespace ClientPatcher
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
-            this.rbClassic = new System.Windows.Forms.RadioButton();
-            this.rbDotNetX86 = new System.Windows.Forms.RadioButton();
-            this.rbDotNetX64 = new System.Windows.Forms.RadioButton();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtFullInstallURL = new System.Windows.Forms.TextBox();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -141,9 +138,6 @@ namespace ClientPatcher
             // 
             this.groupProfileSettings.Controls.Add(this.label4);
             this.groupProfileSettings.Controls.Add(this.txtFullInstallURL);
-            this.groupProfileSettings.Controls.Add(this.rbDotNetX64);
-            this.groupProfileSettings.Controls.Add(this.rbDotNetX86);
-            this.groupProfileSettings.Controls.Add(this.rbClassic);
             this.groupProfileSettings.Controls.Add(this.label1);
             this.groupProfileSettings.Controls.Add(this.btnCacheGen);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
@@ -164,6 +158,22 @@ namespace ClientPatcher
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(11, 170);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 13);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "FullInstallURL";
+            // 
+            // txtFullInstallURL
+            // 
+            this.txtFullInstallURL.Location = new System.Drawing.Point(6, 186);
+            this.txtFullInstallURL.Name = "txtFullInstallURL";
+            this.txtFullInstallURL.Size = new System.Drawing.Size(593, 20);
+            this.txtFullInstallURL.TabIndex = 29;
             // 
             // label1
             // 
@@ -414,57 +424,6 @@ namespace ClientPatcher
             this.btnCreateAccount.UseVisualStyleBackColor = true;
             this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
-            // rbClassic
-            // 
-            this.rbClassic.AutoSize = true;
-            this.rbClassic.Checked = true;
-            this.rbClassic.Location = new System.Drawing.Point(7, 235);
-            this.rbClassic.Name = "rbClassic";
-            this.rbClassic.Size = new System.Drawing.Size(87, 17);
-            this.rbClassic.TabIndex = 26;
-            this.rbClassic.TabStop = true;
-            this.rbClassic.Text = "Classic Client";
-            this.rbClassic.UseVisualStyleBackColor = true;
-            this.rbClassic.CheckedChanged += new System.EventHandler(this.rbClassic_CheckedChanged);
-            // 
-            // rbDotNetX86
-            // 
-            this.rbDotNetX86.AutoSize = true;
-            this.rbDotNetX86.Location = new System.Drawing.Point(7, 258);
-            this.rbDotNetX86.Name = "rbDotNetX86";
-            this.rbDotNetX86.Size = new System.Drawing.Size(99, 17);
-            this.rbDotNetX86.TabIndex = 27;
-            this.rbDotNetX86.Text = ".NET x86 Client";
-            this.rbDotNetX86.UseVisualStyleBackColor = true;
-            this.rbDotNetX86.CheckedChanged += new System.EventHandler(this.rbDotNetX86_CheckedChanged);
-            // 
-            // rbDotNetX64
-            // 
-            this.rbDotNetX64.AutoSize = true;
-            this.rbDotNetX64.Location = new System.Drawing.Point(7, 281);
-            this.rbDotNetX64.Name = "rbDotNetX64";
-            this.rbDotNetX64.Size = new System.Drawing.Size(99, 17);
-            this.rbDotNetX64.TabIndex = 28;
-            this.rbDotNetX64.Text = ".NET x64 Client";
-            this.rbDotNetX64.UseVisualStyleBackColor = true;
-            this.rbDotNetX64.CheckedChanged += new System.EventHandler(this.rbDotNetX64_CheckedChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 170);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 13);
-            this.label4.TabIndex = 30;
-            this.label4.Text = "FullInstallURL";
-            // 
-            // txtFullInstallURL
-            // 
-            this.txtFullInstallURL.Location = new System.Drawing.Point(6, 186);
-            this.txtFullInstallURL.Name = "txtFullInstallURL";
-            this.txtFullInstallURL.Size = new System.Drawing.Size(593, 20);
-            this.txtFullInstallURL.TabIndex = 29;
-            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -531,9 +490,6 @@ namespace ClientPatcher
         private Button btnAdd;
         private Label label1;
         private Button btnCacheGen;
-        private RadioButton rbDotNetX64;
-        private RadioButton rbDotNetX86;
-        private RadioButton rbClassic;
         private Label label4;
         private TextBox txtFullInstallURL;
     }
