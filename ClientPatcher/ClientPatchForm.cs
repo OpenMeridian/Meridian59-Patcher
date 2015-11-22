@@ -168,7 +168,7 @@ namespace ClientPatcher
         }
 
         /// <summary>
-        /// Delete a profile. Loads the default profile afterwards..
+        /// Delete a profile. Loads the default profile afterwards.
         /// </summary>
         private void btnRemove_Click(object sender, EventArgs e)
         {
@@ -241,7 +241,6 @@ namespace ClientPatcher
             groupProfileSettings.Enabled = false;
             // Set the Options tab data fields to the current selection.
             SetProfileDataFields(profile);
-            cbDefaultServer.Checked = profile.Default;
         }
 
         /// <summary>
@@ -264,6 +263,7 @@ namespace ClientPatcher
                 txtPatchInfoURL.Text = profile.PatchInfoUrl;
                 txtFullInstallURL.Text = profile.FullInstallUrl;
                 txtServerName.Text = profile.ServerName;
+                cbDefaultServer.Checked = profile.Default;
             }
         }
 

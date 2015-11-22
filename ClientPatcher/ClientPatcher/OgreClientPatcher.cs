@@ -21,6 +21,7 @@ namespace ClientPatcher
         {
             string fullpath = CurrentProfile.ClientFolder;
             var scanner = new OgreClientScanner(fullpath);
+            scanner.ScannerSetup(fullpath);
             scanner.ScanSource();
             using (var sw = new StreamWriter(fullpath + CacheFile))
             {

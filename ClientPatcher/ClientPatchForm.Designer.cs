@@ -33,6 +33,7 @@ namespace ClientPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.Label label1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
@@ -43,7 +44,6 @@ namespace ClientPatcher
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtFullInstallURL = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.btnCacheGen = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -70,6 +70,7 @@ namespace ClientPatcher
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -138,8 +139,6 @@ namespace ClientPatcher
             // 
             this.groupProfileSettings.Controls.Add(this.label4);
             this.groupProfileSettings.Controls.Add(this.txtFullInstallURL);
-            this.groupProfileSettings.Controls.Add(this.label1);
-            this.groupProfileSettings.Controls.Add(this.btnCacheGen);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
             this.groupProfileSettings.Controls.Add(this.btnSave);
             this.groupProfileSettings.Controls.Add(this.label8);
@@ -177,16 +176,16 @@ namespace ClientPatcher
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(117, 312);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 13);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "Recreates local cache. May take a moment.";
+            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            label1.Location = new System.Drawing.Point(615, 164);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(120, 33);
+            label1.TabIndex = 25;
+            label1.Text = "Recreates local cache. May take a moment.";
             // 
             // btnCacheGen
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(6, 307);
+            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
             this.btnCacheGen.Name = "btnCacheGen";
             this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
             this.btnCacheGen.TabIndex = 24;
@@ -364,7 +363,9 @@ namespace ClientPatcher
             // 
             this.tabOptions.Controls.Add(this.btnStartModify);
             this.tabOptions.Controls.Add(this.btnRemove);
+            this.tabOptions.Controls.Add(label1);
             this.tabOptions.Controls.Add(this.btnAdd);
+            this.tabOptions.Controls.Add(this.btnCacheGen);
             this.tabOptions.Controls.Add(this.groupBox1);
             this.tabOptions.Controls.Add(this.groupProfileSettings);
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
@@ -488,7 +489,6 @@ namespace ClientPatcher
         private Button btnStartModify;
         private Button btnRemove;
         private Button btnAdd;
-        private Label label1;
         private Button btnCacheGen;
         private Label label4;
         private TextBox txtFullInstallURL;
