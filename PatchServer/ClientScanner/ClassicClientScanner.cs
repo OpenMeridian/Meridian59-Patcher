@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PatchListGenerator
 {
-    class ClassicClientScanner : ClientScanner
+    public class ClassicClientScanner : ClientScanner
     {
         public ClientType ClientType { get; set; }
         public override String BasePath { get; set; }

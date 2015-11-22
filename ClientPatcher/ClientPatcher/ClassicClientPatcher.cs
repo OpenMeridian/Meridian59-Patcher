@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using PatchListGenerator;
 
 namespace ClientPatcher
 {
@@ -15,5 +16,15 @@ namespace ClientPatcher
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.exe");
         }
 
+        public override void GenerateCache()
+        {
+            string fullpath = CurrentProfile.ClientFolder;
+            var scanner = new ClassicClientScanner(fullpath);
+            scanner.ScanSource();
+            using (var sw = new StreamWriter(fullpath + CacheFile))
+            {
+                sw.Write(scanner.ToJson());
+            }    
+        }
     }
 }

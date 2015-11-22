@@ -68,7 +68,7 @@ namespace ClientPatcher
 
     abstract class ClientPatcher
     {
-        const string CacheFile = "\\cache.txt";
+        protected const string CacheFile = "\\cache.txt";
         private const string UserAgentString = "Mozilla/4.0 (compatible; .NET CLR 4.0.;) OpenMeridianPatcher v1.4";
 
         private string _patchInfoJason = "";
@@ -223,16 +223,7 @@ namespace ClientPatcher
             CompareFiles();
         }
 
-        public void GenerateCache()
-        {
-            string fullpath = CurrentProfile.ClientFolder;
-            var scanner = new ClientScanner(fullpath);
-            scanner.ScanSource();
-            using (var sw = new StreamWriter(fullpath + CacheFile))
-            {
-                sw.Write(scanner.ToJson());
-            }    
-        }
+        public abstract void GenerateCache();
 
         public void SavePatchAsCache()
         {
