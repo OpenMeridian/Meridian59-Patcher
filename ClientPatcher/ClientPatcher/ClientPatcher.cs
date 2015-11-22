@@ -287,6 +287,7 @@ namespace ClientPatcher
                 if (FileScanned != null)
                     FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
                 var localFile = new ManagedFile(fullpath);
+                localFile.Basepath = patchFile.Basepath;
                 localFile.ComputeHash();
                 if (patchFile.MyHash != localFile.MyHash)
                 {
