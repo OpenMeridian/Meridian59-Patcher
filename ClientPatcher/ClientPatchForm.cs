@@ -186,19 +186,7 @@ namespace ClientPatcher
             txtFullInstallURL.Text = ps.FullInstallUrl;
             txtServerName.Text = ps.ServerName;
             cbDefaultServer.Checked = ps.Default;
-            switch (ps.ClientType)
-            {
-                case ClientType.Classic:
-                    rbClassic.Checked = true;
-                    rbDotNetX64.Checked = false;
-                    rbDotNetX86.Checked = false;
-                    break;
-                case ClientType.DotNet:
-                    rbClassic.Checked = false;
-                    rbDotNetX64.Checked = true;
-                    rbDotNetX86.Checked = false;
-                    break;
-            }
+
             _changetype = ChangeType.ModProfile;
         }
         private void btnSave_Click(object sender, EventArgs e)
@@ -207,14 +195,7 @@ namespace ClientPatcher
             {
                 case ChangeType.AddProfile:
                     ClientType clientType = ClientType.Classic;
-                    if (rbDotNetX64.Checked)
-                    {
-                        clientType = ClientType.DotNet;
-                    }
-                    if (rbDotNetX86.Checked)
-                    {
-                        clientType = ClientType.DotNet;
-                    }
+
                     _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text,txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
                     groupProfileSettings.Enabled = false;
                     break;
@@ -280,16 +261,7 @@ namespace ClientPatcher
             _settings.Servers[selected].FullInstallUrl = txtFullInstallURL.Text;
             _settings.Servers[selected].ServerName = txtServerName.Text;
             _settings.Servers[selected].Default = cbDefaultServer.Checked;
-            ClientType clientType = ClientType.Classic;
-            if (rbDotNetX64.Checked)
-            {
-                clientType = ClientType.DotNet;
-            }
-            if (rbDotNetX86.Checked)
-            {
-                clientType = ClientType.DotNet;
-            }
-            _settings.Servers[selected].ClientType = clientType;
+
             _changetype = ChangeType.None;
             _settings.SaveSettings();
             _settings.LoadSettings();
@@ -475,24 +447,5 @@ namespace ClientPatcher
                 return;
             webControl.Source = e.TargetURL;
         }
-
-        private void rbClassic_CheckedChanged(object sender, EventArgs e)
-        {
-            //rbDotNetX64.Checked = false;
-            //rbDotNetX86.Checked = false;
-        }
-
-        private void rbDotNetX86_CheckedChanged(object sender, EventArgs e)
-        {
-            //rbClassic.Checked = false;
-            //rbDotNetX64.Checked = false;
-        }
-
-        private void rbDotNetX64_CheckedChanged(object sender, EventArgs e)
-        {
-            //rbClassic.Checked = false;
-            //rbDotNetX86.Checked = false;
-        }
-
     }
 }
