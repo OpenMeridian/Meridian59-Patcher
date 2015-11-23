@@ -188,33 +188,37 @@ namespace ClientPatcher
             TestPath(CurrentProfile.ClientFolder + "\\");
         }
 
-        private void CreateNewClient()
+        public void CreateNewClient()
         {
-            var wc = new WebClient();
-            wc.Headers.Add("user-agent", UserAgentString);
-            
             CreateFolderStructure();
 
-            ManagedFile file = new ManagedFile(Path.GetFileName(CurrentProfile.FullInstallUrl));
+            ManagedFile file = PatchFiles.Find(x => x.Filename == "latest.zip");
 
-            // TODO: Where do we get the hash and size from?
-            file.Length = 493663553;
-            file.MyHash = "54238DFC713DC5A7EA4ED0CB6D25C91D";
-
-            try
+            // if we can get a latest.zip use it, if not, just patch as normal
+            if (file != null)
             {
-                if (StartedDownload != null)
-                    StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+                DownloadOneFileAsync(file);
 
-                wc.DownloadFile(CurrentProfile.FullInstallUrl, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
-                
-                UnZip(CurrentProfile.ClientFolder + file.Basepath + file.Filename, CurrentProfile.ClientFolder + file.Basepath);
-                File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
-            }
-            catch (WebException e)
-            {
-                Console.WriteLine("WebException Handler: {0}", e);
-                return;
+
+                while (!_continueAsync)
+                {
+                    //Wait for the download to finish
+                    Thread.Sleep(10);
+                }
+
+                if (!_downloadFileFailed)
+                {
+                    UnZip(CurrentProfile.ClientFolder + file.Basepath + file.Filename, CurrentProfile.ClientFolder + file.Basepath);
+                    File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                }
+                else
+                {
+                    // don't fail the patch if we couldn't get the full installation zip, just patch them
+                    _downloadFileFailed = false;
+
+                    if (File.Exists(CurrentProfile.ClientFolder + file.Basepath + file.Filename))
+                        File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                }
             }
         }
 
@@ -236,14 +240,13 @@ namespace ClientPatcher
             }
         }
 
-        protected abstract bool IsNewClient();
+        public abstract bool IsNewClient();
 
         public void ScanClient()
         {
             if (IsNewClient())
-            {
                 CreateNewClient();
-            }
+
             CompareFiles();
         }
 
@@ -278,6 +281,9 @@ namespace ClientPatcher
         {
             foreach (ManagedFile patchFile in PatchFiles)
             {
+                if (!patchFile.Download)
+                    continue;
+
                 if (FileScanned != null)
                     FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
                 ManagedFile currentFile =
@@ -298,6 +304,9 @@ namespace ClientPatcher
         {
             foreach (ManagedFile patchFile in PatchFiles)
             {
+                if (!patchFile.Download)
+                    continue;
+
                 string fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
                 if (FileScanned != null)
                     FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar

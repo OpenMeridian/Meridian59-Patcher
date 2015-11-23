@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace PatchListGenerator
@@ -28,6 +29,16 @@ namespace PatchListGenerator
           ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".bsf",
                 ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compositor",
                 ".imageset", ".layout", ".looknfeel", ".scheme" };
+       }
+       /// <summary>
+       /// Adds the special files to scan for when using Ogre3d/.NET Meridian Client
+       /// </summary>
+       public override void AddSpecialFiles()
+       {
+           SpecialFiles = new List<ManagedFile>();
+
+           if (File.Exists(BasePath + "\\" + "latest.zip"))
+             SpecialFiles.Add(new ManagedFile(BasePath + "\\" + "latest.zip", false));
        }
     }
 }

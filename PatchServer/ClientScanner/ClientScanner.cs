@@ -21,6 +21,7 @@ namespace PatchListGenerator
         private List<string> ScanFiles { get; set; }
         public List<string> ScanExtensions { get; set; }
         public List<ManagedFile> Files { get; set; }
+        public List<ManagedFile> SpecialFiles { get; set; }
         public virtual string BasePath { get; set; }
         
         public ClientScanner()
@@ -33,9 +34,11 @@ namespace PatchListGenerator
         }
 
         public virtual void AddExtensions() { }
+        public virtual void AddSpecialFiles() { }
         public void ScannerSetup(string basepath)
         {
             AddExtensions();
+            AddSpecialFiles();
             ScanFiles = new List<string>();
             ScanFiles.AddRange(DirSearch(basepath));
         }
@@ -88,6 +91,8 @@ namespace PatchListGenerator
 
         public string ToJson()
         {
+            if (SpecialFiles != null)
+                Files.AddRange(SpecialFiles);
             return JsonConvert.SerializeObject(Files, Formatting.Indented);
         }
 
