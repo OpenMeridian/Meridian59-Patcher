@@ -134,6 +134,7 @@ namespace ClientPatcher
             txtPatchInfoURL.Text = ps.PatchInfoUrl;
             txtFullInstallURL.Text = ps.FullInstallUrl;
             txtServerName.Text = ps.ServerName;
+            txtServerNumber.Text = ps.ServerNumber.ToString();
             cbDefaultServer.Checked = ps.Default;
 
             _changetype = ChangeType.ModProfile;
@@ -149,7 +150,10 @@ namespace ClientPatcher
                 case ChangeType.AddProfile:
                     ClientType clientType = ClientType.Classic;
 
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text,
+                                         txtPatchInfoURL.Text, txtFullInstallURL.Text,
+                                         txtServerName.Text, Convert.ToInt32(txtServerNumber.Text),
+                                         cbDefaultServer.Checked, clientType);
                     groupProfileSettings.Enabled = false;
                     break;
                 case ChangeType.ModProfile:
@@ -166,7 +170,8 @@ namespace ClientPatcher
         /// </summary>
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
                 _settings.Servers.RemoveAt(selected);
@@ -222,7 +227,8 @@ namespace ClientPatcher
                 return;
 
             _patcher.CurrentProfile = profile;
-            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", profile.ServerName, profile.ClientFolder);
+            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n",
+                            profile.ServerName, profile.ClientFolder);
             btnPlay.Enabled = false;
 
             // Set create account text.
@@ -269,6 +275,7 @@ namespace ClientPatcher
                 txtPatchInfoURL.Text = "";
                 txtFullInstallURL.Text = "";
                 txtServerName.Text = "";
+                txtServerNumber.Text = "0";
             }
             else
             {
@@ -277,6 +284,7 @@ namespace ClientPatcher
                 txtPatchInfoURL.Text = profile.PatchInfoUrl;
                 txtFullInstallURL.Text = profile.FullInstallUrl;
                 txtServerName.Text = profile.ServerName;
+                txtServerNumber.Text = profile.ServerNumber.ToString();
                 cbDefaultServer.Checked = profile.Default;
             }
         }
@@ -292,6 +300,7 @@ namespace ClientPatcher
             _settings.Servers[selected].PatchInfoUrl = txtPatchInfoURL.Text;
             _settings.Servers[selected].FullInstallUrl = txtFullInstallURL.Text;
             _settings.Servers[selected].ServerName = txtServerName.Text;
+            _settings.Servers[selected].ServerNumber = Convert.ToInt32(txtServerNumber.Text);
             _settings.Servers[selected].Default = cbDefaultServer.Checked;
 
             _changetype = ChangeType.None;
@@ -300,7 +309,7 @@ namespace ClientPatcher
         }
 
         /// <summary>
-        /// Refreshes the profile selection to default.
+        /// Refreshes the list of profiles in the UI, selects the default.
         /// </summary>
         private void RefreshDdl()
         {
@@ -537,7 +546,7 @@ namespace ClientPatcher
         /// </summary>
         private void SetCreateAccountText(PatcherSettings ps)
         {
-            btnCreateAccount.Text = String.Format("Create Account for {0}", ps.ServerName);
+            btnCreateAccount.Text = String.Format("Create Account for {0}", ps.ServerNumber);
         }
         #endregion
 

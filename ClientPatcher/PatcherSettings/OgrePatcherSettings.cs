@@ -7,6 +7,7 @@ namespace ClientPatcher
         OgrePatcherSettings() : base()
         {
             ServerName = "103 - Open Meridian Official (Ogre)";
+            ServerNumber = 103;
             PatchInfoUrl = "http://ww1.openmeridian.org/103/ogrepatchinfo.txt";
             FullInstallUrl = "http://ww1.openmeridian.org/103/Meridian59.Ogre.Classic.zip";
             ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";

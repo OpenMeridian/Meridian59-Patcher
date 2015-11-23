@@ -78,6 +78,7 @@ namespace ClientPatcher
                         localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
                         localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
                         localProfile.ServerName = webProfile.ServerName;
+                        localProfile.ServerNumber = webProfile.ServerNumber;
                         localProfile.FullInstallUrl = webProfile.FullInstallUrl;
                         localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
                         localProfile.Enabled = webProfile.Enabled;
@@ -146,7 +147,9 @@ namespace ClientPatcher
         }
 
         //used when adding from form
-        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string fullinstallurl, string servername, bool isdefault = false, ClientType clientType = ClientType.Classic)
+        public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl,
+                               string fullinstallurl, string servername, int servernumber,
+                               bool isdefault = false, ClientType clientType = ClientType.Classic)
         {
             var ps = new PatcherSettings
             {
@@ -155,9 +158,11 @@ namespace ClientPatcher
                 PatchInfoUrl = patchinfourl,
                 FullInstallUrl = fullinstallurl,
                 ServerName = servername,
+                ServerNumber = servernumber,
                 Default = isdefault,
                 ClientType = clientType
             };
+
             if (isdefault)
             {
                 foreach (PatcherSettings patcherSettingse in Servers.FindAll(s => s.Default))
@@ -186,6 +191,11 @@ namespace ClientPatcher
         public PatcherSettings FindByName(string name)
         {
             return Servers.Find(x => x.ServerName == name);
+        }
+
+        public PatcherSettings FindByNumber(int number)
+        {
+            return Servers.Find(x => x.ServerNumber == number);
         }
 
         /// <summary>

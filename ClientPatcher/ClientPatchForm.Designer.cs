@@ -42,6 +42,8 @@ namespace ClientPatcher
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
+            this.txtServerNumber = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtFullInstallURL = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -145,6 +147,8 @@ namespace ClientPatcher
             // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.Controls.Add(this.txtServerNumber);
+            this.groupProfileSettings.Controls.Add(this.label9);
             this.groupProfileSettings.Controls.Add(this.label4);
             this.groupProfileSettings.Controls.Add(this.txtFullInstallURL);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
@@ -165,6 +169,22 @@ namespace ClientPatcher
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
+            // 
+            // txtServerNumber
+            // 
+            this.txtServerNumber.Location = new System.Drawing.Point(6, 225);
+            this.txtServerNumber.Name = "txtServerNumber";
+            this.txtServerNumber.Size = new System.Drawing.Size(86, 20);
+            this.txtServerNumber.TabIndex = 32;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 209);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(78, 13);
+            this.label9.TabIndex = 31;
+            this.label9.Text = "Server Number";
             // 
             // label4
             // 
@@ -241,7 +261,7 @@ namespace ClientPatcher
             // cbDefaultServer
             // 
             this.cbDefaultServer.AutoSize = true;
-            this.cbDefaultServer.Location = new System.Drawing.Point(6, 212);
+            this.cbDefaultServer.Location = new System.Drawing.Point(6, 263);
             this.cbDefaultServer.Name = "cbDefaultServer";
             this.cbDefaultServer.Size = new System.Drawing.Size(100, 17);
             this.cbDefaultServer.TabIndex = 16;
@@ -492,6 +512,8 @@ namespace ClientPatcher
         private Label label4;
         private TextBox txtFullInstallURL;
         private Label label1;
+        private TextBox txtServerNumber;
+        private Label label9;
     }
 }
 
