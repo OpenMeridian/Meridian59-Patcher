@@ -1,0 +1,11 @@
+*.cs eol=crlf
+*.csproj eol=crlf
+*.sln eol=crlf
+*.resx eol=crlf
+*.config eol=crlf
+*.settings eol=crlf
+*.manifest eol=crlf
+*.xml eol=crlf
+*.php eol=crlf
+*.gitignore eol=crlf
+*.sln eol=crlf
