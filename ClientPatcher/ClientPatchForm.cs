@@ -231,8 +231,6 @@ namespace ClientPatcher
             txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", profile.ServerName, profile.ClientFolder);
             btnPlay.Enabled = false;
 
-            //webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
-
             // Set create account text.
             SetCreateAccountText(_patcher.CurrentProfile);
             _creatingAccount = false;
@@ -241,6 +239,25 @@ namespace ClientPatcher
             groupProfileSettings.Enabled = false;
             // Set the Options tab data fields to the current selection.
             SetProfileDataFields(profile);
+
+            // Load the type of client patcher we need for scanning the default profile.
+            ClientType ct = profile.ClientType;
+            switch (ct)
+            {
+                case ClientType.Classic:
+                    _patcher = new ClassicClientPatcher(profile);
+                    break;
+                case ClientType.DotNet:
+                    _patcher = new OgreClientPatcher(profile);
+                    break;
+            }
+
+            // Add event handlers.
+            _patcher.FileScanned += Patcher_FileScanned;
+            _patcher.StartedDownload += Patcher_StartedDownload;
+            _patcher.ProgressedDownload += Patcher_ProgressedDownload;
+            _patcher.EndedDownload += Patcher_EndedDownload;
+            _patcher.FailedDownload += Patcher_FailedDownload;
         }
 
         /// <summary>
@@ -317,9 +334,16 @@ namespace ClientPatcher
         {
             btnPatch.Enabled = false;
             ddlServer.Enabled = false;
+
             txtLog.AppendText("Downloading Patch Information....\r\n");
             if (_patcher.DownloadPatchDefinition() == 1)
             {
+                if (_patcher.IsNewClient())
+                {
+                    // show download progress bar, we are downloading the full zip
+                    pbFileProgress.Visible = true;
+                }
+
                 pbProgress.Value = 0;
                 pbProgress.Maximum = _patcher.PatchFiles.Count;
                 if (_patcher.HasCache())

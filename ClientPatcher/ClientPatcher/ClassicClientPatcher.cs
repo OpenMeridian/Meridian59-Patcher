@@ -11,7 +11,7 @@ namespace ClientPatcher
                 
         }
 
-        protected override bool IsNewClient()
+        public override bool IsNewClient()
         {
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.exe");
         }

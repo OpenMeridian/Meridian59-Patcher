@@ -15,13 +15,12 @@ namespace PatchListGenerator
         public string Path; //C:\whatever\
         [JsonIgnore]
         public string Filepath;
-        [JsonIgnore]
-        public bool Download = false;
 
         public string Basepath = "\\";
         public string Filename { get; set; } //whatever.roo
         public string MyHash { get; set; } //what is the hash of this file
         public long Length;
+        public bool Download = true;
 
         public ManagedFile()
         {
@@ -31,6 +30,15 @@ namespace PatchListGenerator
         {
             Filepath = filepath;
             ParseFilePath();
+        }
+
+        public ManagedFile(string filepath,bool autoDownload)
+        {
+            Filepath = filepath;
+            Download = autoDownload;
+            ParseFilePath();
+            ComputeHash();
+            FillLength();
         }
         /// <summary>
         /// Pulls out the file path and name, adds Beasepath(relative) metadata
@@ -99,6 +107,12 @@ namespace PatchListGenerator
         /// </summary>
         public void FillLength()
         {
+            if (!File.Exists(Filepath))
+            {
+                Length = 0;
+                return;
+            }
+
             var file = new FileInfo(Filepath);
             Length = file.Length;
         }
