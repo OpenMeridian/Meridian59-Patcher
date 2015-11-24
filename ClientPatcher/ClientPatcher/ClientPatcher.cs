@@ -241,6 +241,7 @@ namespace ClientPatcher
         }
 
         public abstract bool IsNewClient();
+        public abstract void Launch();
 
         public void ScanClient()
         {

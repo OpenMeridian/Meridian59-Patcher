@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Diagnostics;
 using PatchListGenerator;
 
 namespace ClientPatcher
@@ -26,6 +27,19 @@ namespace ClientPatcher
             {
                 sw.Write(scanner.ToJson());
             }    
+        }
+        public override void Launch()
+        {
+            var meridian = new ProcessStartInfo
+            {
+                FileName = CurrentProfile.ClientFolder + "\\meridian.exe",
+                WorkingDirectory = CurrentProfile.ClientFolder + "\\",
+
+                //TODO: add ability to enter username and password during patching
+                //meridian.Arguments = "/U:username /P:password /H:host";
+            };
+
+            Process.Start(meridian);
         }
     }
 }

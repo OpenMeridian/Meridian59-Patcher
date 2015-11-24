@@ -86,16 +86,7 @@ namespace ClientPatcher
         /// </summary>
         private void LaunchProfile()
         {
-            var meridian = new ProcessStartInfo
-            {
-                FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
-                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\",
-
-                //TODO: add ability to enter username and password during patching
-                //meridian.Arguments = "/U:username /P:password /H:host";
-            };
-
-            Process.Start(meridian);
+            _patcher.Launch();
             Application.Exit();
             webControl.Dispose();
             Environment.Exit(1);
