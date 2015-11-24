@@ -115,6 +115,7 @@ namespace ClientPatcher
                 Servers = GetNewSettings();
                 GrantAccess();
             }
+            Servers.Sort((x, y) => x.ServerNumber.CompareTo(y.ServerNumber));
         }
         /// <summary>
         /// JSON Serialize our PatcherSettings and write them to settings.txt

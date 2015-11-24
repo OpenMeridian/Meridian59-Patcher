@@ -313,11 +313,15 @@ namespace ClientPatcher
         /// </summary>
         private void RefreshDdl()
         {
+            int defaultnum = _settings.GetDefault().ServerNumber;
             foreach (PatcherSettings profile in _settings.Servers)
             {
                 if (profile.Enabled)
                 {
-                    ddlServer.Items.Add(profile.ServerName);
+                    if (profile.ServerNumber == defaultnum)
+                        ddlServer.Items.Insert(0, profile.ServerName);
+                    else
+                        ddlServer.Items.Add(profile.ServerName);
                     if (profile.Default)
                         ddlServer.SelectedItem = profile.ServerName;
                 }
