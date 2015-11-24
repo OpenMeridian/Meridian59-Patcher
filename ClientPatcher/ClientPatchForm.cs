@@ -9,6 +9,7 @@ using Awesomium.Core;
 using Awesomium.Windows.Forms;
 using PatchListGenerator;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
+using System.Drawing;
 
 namespace ClientPatcher
 {
@@ -26,6 +27,9 @@ namespace ClientPatcher
         ChangeType _changetype = ChangeType.None;
 
         public bool showFileNames = false;
+
+        // point for handling borderless window dragging
+        Point LastClick;
 
         public ClientPatchForm()
         {
@@ -102,6 +106,7 @@ namespace ClientPatcher
         }
         private void btnPatch_Click(object sender, EventArgs e)
         {
+            pbProgress.Visible = true;
             PatchProfile();
         }
         #endregion
@@ -598,5 +603,26 @@ namespace ClientPatcher
             }
         }
         #endregion
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+            webControl.Dispose();
+            Environment.Exit(1);
+        }
+
+        private void ClientPatchForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            LastClick = e.Location;
+        }
+
+        private void ClientPatchForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                this.Left += e.X - LastClick.X;
+                this.Top += e.Y - LastClick.Y;
+            }
+        }
     }
 }

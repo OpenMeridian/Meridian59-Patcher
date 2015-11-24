@@ -33,18 +33,16 @@ namespace ClientPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.Label label1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
+            this.label1 = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
             this.ddlServer = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPatch = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtFullInstallURL = new System.Windows.Forms.TextBox();
-            this.btnCacheGen = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -56,6 +54,7 @@ namespace ClientPatcher
             this.txtClientFolder = new System.Windows.Forms.TextBox();
             this.txtPatchInfoURL = new System.Windows.Forms.TextBox();
             this.txtServerName = new System.Windows.Forms.TextBox();
+            this.btnCacheGen = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.pbFileProgress = new System.Windows.Forms.ProgressBar();
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
@@ -70,7 +69,7 @@ namespace ClientPatcher
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -78,17 +77,28 @@ namespace ClientPatcher
             this.tabOptions.SuspendLayout();
             this.SuspendLayout();
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label1.Location = new System.Drawing.Point(582, 177);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 33);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "Recreates local cache. May take a moment.";
+            // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(15, 426);
+            this.pbProgress.Location = new System.Drawing.Point(12, 136);
             this.pbProgress.Name = "pbProgress";
-            this.pbProgress.Size = new System.Drawing.Size(187, 32);
+            this.pbProgress.Size = new System.Drawing.Size(187, 13);
             this.pbProgress.Step = 1;
             this.pbProgress.TabIndex = 0;
+            this.pbProgress.Visible = false;
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(15, 464);
+            this.btnPlay.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlay.Location = new System.Drawing.Point(12, 394);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(187, 46);
             this.btnPlay.TabIndex = 1;
@@ -99,7 +109,7 @@ namespace ClientPatcher
             // ddlServer
             // 
             this.ddlServer.FormattingEnabled = true;
-            this.ddlServer.Location = new System.Drawing.Point(12, 41);
+            this.ddlServer.Location = new System.Drawing.Point(15, 57);
             this.ddlServer.Name = "ddlServer";
             this.ddlServer.Size = new System.Drawing.Size(187, 21);
             this.ddlServer.TabIndex = 4;
@@ -108,32 +118,25 @@ namespace ClientPatcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(10, 9);
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Heidelberg-Normal", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.Gold;
+            this.label2.Location = new System.Drawing.Point(30, 28);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(192, 29);
+            this.label2.Size = new System.Drawing.Size(155, 26);
             this.label2.TabIndex = 6;
             this.label2.Text = "Select a Server";
             // 
             // btnPatch
             // 
-            this.btnPatch.Location = new System.Drawing.Point(15, 336);
+            this.btnPatch.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPatch.Location = new System.Drawing.Point(12, 84);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(187, 46);
             this.btnPatch.TabIndex = 7;
             this.btnPatch.Text = "Update/Install";
             this.btnPatch.UseVisualStyleBackColor = true;
             this.btnPatch.Click += new System.EventHandler(this.btnPatch_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(10, 304);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(174, 29);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Update/Install";
             // 
             // groupProfileSettings
             // 
@@ -153,7 +156,7 @@ namespace ClientPatcher
             this.groupProfileSettings.Enabled = false;
             this.groupProfileSettings.Location = new System.Drawing.Point(6, 7);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(605, 341);
+            this.groupProfileSettings.Size = new System.Drawing.Size(566, 341);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
@@ -171,31 +174,12 @@ namespace ClientPatcher
             // 
             this.txtFullInstallURL.Location = new System.Drawing.Point(6, 186);
             this.txtFullInstallURL.Name = "txtFullInstallURL";
-            this.txtFullInstallURL.Size = new System.Drawing.Size(593, 20);
+            this.txtFullInstallURL.Size = new System.Drawing.Size(553, 20);
             this.txtFullInstallURL.TabIndex = 29;
-            // 
-            // label1
-            // 
-            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            label1.Location = new System.Drawing.Point(615, 164);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(120, 33);
-            label1.TabIndex = 25;
-            label1.Text = "Recreates local cache. May take a moment.";
-            // 
-            // btnCacheGen
-            // 
-            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
-            this.btnCacheGen.Name = "btnCacheGen";
-            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
-            this.btnCacheGen.TabIndex = 24;
-            this.btnCacheGen.Text = "Verify All Files";
-            this.btnCacheGen.UseVisualStyleBackColor = true;
-            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(502, 110);
+            this.btnBrowse.Location = new System.Drawing.Point(462, 109);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(97, 20);
             this.btnBrowse.TabIndex = 22;
@@ -205,7 +189,7 @@ namespace ClientPatcher
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(502, 275);
+            this.btnSave.Location = new System.Drawing.Point(462, 271);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(97, 55);
             this.btnSave.TabIndex = 21;
@@ -263,29 +247,39 @@ namespace ClientPatcher
             // 
             this.txtPatchBaseURL.Location = new System.Drawing.Point(6, 149);
             this.txtPatchBaseURL.Name = "txtPatchBaseURL";
-            this.txtPatchBaseURL.Size = new System.Drawing.Size(593, 20);
+            this.txtPatchBaseURL.Size = new System.Drawing.Size(553, 20);
             this.txtPatchBaseURL.TabIndex = 15;
             // 
             // txtClientFolder
             // 
             this.txtClientFolder.Location = new System.Drawing.Point(6, 110);
             this.txtClientFolder.Name = "txtClientFolder";
-            this.txtClientFolder.Size = new System.Drawing.Size(490, 20);
+            this.txtClientFolder.Size = new System.Drawing.Size(450, 20);
             this.txtClientFolder.TabIndex = 14;
             // 
             // txtPatchInfoURL
             // 
             this.txtPatchInfoURL.Location = new System.Drawing.Point(6, 71);
             this.txtPatchInfoURL.Name = "txtPatchInfoURL";
-            this.txtPatchInfoURL.Size = new System.Drawing.Size(593, 20);
+            this.txtPatchInfoURL.Size = new System.Drawing.Size(553, 20);
             this.txtPatchInfoURL.TabIndex = 13;
             // 
             // txtServerName
             // 
             this.txtServerName.Location = new System.Drawing.Point(6, 32);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(593, 20);
+            this.txtServerName.Size = new System.Drawing.Size(553, 20);
             this.txtServerName.TabIndex = 12;
+            // 
+            // btnCacheGen
+            // 
+            this.btnCacheGen.Location = new System.Drawing.Point(584, 148);
+            this.btnCacheGen.Name = "btnCacheGen";
+            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
+            this.btnCacheGen.TabIndex = 24;
+            this.btnCacheGen.Text = "Verify All Files";
+            this.btnCacheGen.UseVisualStyleBackColor = true;
+            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // txtLog
             // 
@@ -296,14 +290,14 @@ namespace ClientPatcher
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(722, 468);
+            this.txtLog.Size = new System.Drawing.Size(706, 468);
             this.txtLog.TabIndex = 11;
             // 
             // pbFileProgress
             // 
-            this.pbFileProgress.Location = new System.Drawing.Point(15, 388);
+            this.pbFileProgress.Location = new System.Drawing.Point(12, 155);
             this.pbFileProgress.Name = "pbFileProgress";
-            this.pbFileProgress.Size = new System.Drawing.Size(187, 32);
+            this.pbFileProgress.Size = new System.Drawing.Size(187, 13);
             this.pbFileProgress.TabIndex = 12;
             this.pbFileProgress.Visible = false;
             // 
@@ -327,7 +321,7 @@ namespace ClientPatcher
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(739, 506);
+            this.tabControl1.Size = new System.Drawing.Size(716, 506);
             this.tabControl1.TabIndex = 14;
             // 
             // tabBrowser
@@ -335,14 +329,14 @@ namespace ClientPatcher
             this.tabBrowser.Controls.Add(this.webControl);
             this.tabBrowser.Location = new System.Drawing.Point(4, 22);
             this.tabBrowser.Name = "tabBrowser";
-            this.tabBrowser.Size = new System.Drawing.Size(731, 480);
+            this.tabBrowser.Size = new System.Drawing.Size(708, 480);
             this.tabBrowser.TabIndex = 2;
             this.tabBrowser.Text = "News";
             // 
             // webControl
             // 
             this.webControl.Location = new System.Drawing.Point(3, 0);
-            this.webControl.Size = new System.Drawing.Size(725, 480);
+            this.webControl.Size = new System.Drawing.Size(716, 480);
             this.webControl.Source = new System.Uri("http://openmeridian.org/forums/latestnews.php", System.UriKind.Absolute);
             this.webControl.TabIndex = 0;
             this.webControl.ShowCreatedWebView += new Awesomium.Core.ShowCreatedWebViewEventHandler(this.Awesomium_Windows_Forms_WebControl_ShowCreatedWebView);
@@ -354,7 +348,7 @@ namespace ClientPatcher
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(731, 480);
+            this.tabLog.Size = new System.Drawing.Size(708, 480);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -363,7 +357,7 @@ namespace ClientPatcher
             // 
             this.tabOptions.Controls.Add(this.btnStartModify);
             this.tabOptions.Controls.Add(this.btnRemove);
-            this.tabOptions.Controls.Add(label1);
+            this.tabOptions.Controls.Add(this.label1);
             this.tabOptions.Controls.Add(this.btnAdd);
             this.tabOptions.Controls.Add(this.btnCacheGen);
             this.tabOptions.Controls.Add(this.groupBox1);
@@ -371,14 +365,14 @@ namespace ClientPatcher
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOptions.Size = new System.Drawing.Size(731, 480);
+            this.tabOptions.Size = new System.Drawing.Size(708, 480);
             this.tabOptions.TabIndex = 1;
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;
             // 
             // btnStartModify
             // 
-            this.btnStartModify.Location = new System.Drawing.Point(617, 73);
+            this.btnStartModify.Location = new System.Drawing.Point(584, 86);
             this.btnStartModify.Name = "btnStartModify";
             this.btnStartModify.Size = new System.Drawing.Size(108, 23);
             this.btnStartModify.TabIndex = 28;
@@ -388,7 +382,7 @@ namespace ClientPatcher
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(617, 44);
+            this.btnRemove.Location = new System.Drawing.Point(584, 57);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(108, 23);
             this.btnRemove.TabIndex = 27;
@@ -398,7 +392,7 @@ namespace ClientPatcher
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(617, 13);
+            this.btnAdd.Location = new System.Drawing.Point(584, 26);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(108, 23);
             this.btnAdd.TabIndex = 26;
@@ -417,7 +411,8 @@ namespace ClientPatcher
             // 
             // btnCreateAccount
             // 
-            this.btnCreateAccount.Location = new System.Drawing.Point(15, 161);
+            this.btnCreateAccount.Font = new System.Drawing.Font("Heidelberg-Normal", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreateAccount.Location = new System.Drawing.Point(12, 342);
             this.btnCreateAccount.Name = "btnCreateAccount";
             this.btnCreateAccount.Size = new System.Drawing.Size(187, 46);
             this.btnCreateAccount.TabIndex = 15;
@@ -425,24 +420,42 @@ namespace ClientPatcher
             this.btnCreateAccount.UseVisualStyleBackColor = true;
             this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(12, 446);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(187, 46);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Quit";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(963, 527);
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(963, 546);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.pbFileProgress);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ddlServer);
             this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.btnCreateAccount);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ClientPatchForm";
             this.Text = "OpenMeridian Client Patcher";
+            this.TransparencyKey = System.Drawing.Color.Magenta;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ClientPatchForm_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ClientPatchForm_MouseMove);
             this.groupProfileSettings.ResumeLayout(false);
             this.groupProfileSettings.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -462,7 +475,6 @@ namespace ClientPatcher
         private ComboBox ddlServer;
         private Label label2;
         private Button btnPatch;
-        private Label label3;
         private GroupBox groupProfileSettings;
         private Label label8;
         private Label label7;
@@ -492,6 +504,8 @@ namespace ClientPatcher
         private Button btnCacheGen;
         private Label label4;
         private TextBox txtFullInstallURL;
+        private Label label1;
+        private Button button1;
     }
 }
 
