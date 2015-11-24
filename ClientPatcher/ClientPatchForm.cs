@@ -66,6 +66,9 @@ namespace ClientPatcher
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
             _patcher.FailedDownload += Patcher_FailedDownload;
+            _patcher.StartedUnzip += Patcher_StartedUnzip;
+            _patcher.ProgressedUnzip += Patcher_ProgressedUnzip;
+            _patcher.EndedUnzip += Patcher_EndedUnzip;
 
             // Set the create account button to display "create account" text.
             SetCreateAccountText(_patcher.CurrentProfile);
@@ -249,6 +252,9 @@ namespace ClientPatcher
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
             _patcher.FailedDownload += Patcher_FailedDownload;
+            _patcher.StartedUnzip += Patcher_StartedUnzip;
+            _patcher.ProgressedUnzip += Patcher_ProgressedUnzip;
+            _patcher.EndedUnzip += Patcher_EndedUnzip;
         }
 
         /// <summary>
@@ -370,6 +376,23 @@ namespace ClientPatcher
             }
             else
                 PostDownload();
+        }
+        #endregion
+
+        #region extracting
+        private void Patcher_StartedUnzip(object sender, StartUnzipEventArgs e)
+        {
+            TxtLogAppendText(String.Format("Decompressing Archive: {0}\r\n", e.Filename));
+        }
+        private void Patcher_ProgressedUnzip(object sender, ProgressUnzipEventArgs e)
+        {
+            // this is worthless, the current unzip code unzips the whole thing then gets to here
+            // leaving the event handler in case we need it in the future
+            // TxtLogAppendText(String.Format("Extracted File: {0}\r\n", e.ExtractedFilename));
+        }
+        private void Patcher_EndedUnzip(object sender, EndUnzipEventArgs e)
+        {
+            TxtLogAppendText(String.Format("Decompressed {0}\r\n", e.FileName));
         }
         #endregion
 
