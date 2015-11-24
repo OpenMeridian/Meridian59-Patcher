@@ -72,16 +72,27 @@ namespace ClientPatcher
                 //if a local match, update, else, add a new local profile
                 if (localProfile != null)
                 {
-                    //dont update all fields on purpose. user retains control of paths, which client to use.
-                    localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
-                    localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
-                    localProfile.ServerName = webProfile.ServerName;
-                    localProfile.FullInstallUrl = webProfile.FullInstallUrl;
-                    localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+                    if (!webProfile.DeleteProfile)
+                    {
+                        //dont update all fields on purpose. user retains control of paths, which client to use.
+                        localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
+                        localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
+                        localProfile.ServerName = webProfile.ServerName;
+                        localProfile.FullInstallUrl = webProfile.FullInstallUrl;
+                        localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+                        localProfile.Enabled = webProfile.Enabled;
+                    }
+                    else
+                    {
+                        // remove from the list of servers (will also not be in saved list)
+                        Servers.Remove(localProfile);
+                    }
                 }
                 else
                 {
-                    Servers.Add(webProfile);
+                    // don't add a server that is supposed to be deleted
+                    if (!webProfile.DeleteProfile)
+                        Servers.Add(webProfile);
                 }
             }
         }
@@ -109,11 +120,21 @@ namespace ClientPatcher
         /// </summary>
         public void SaveSettings()
         {
+            List<PatcherSettings> ServerSaveList = new List<PatcherSettings>();
+
+            foreach (PatcherSettings server in Servers)
+            {
+                if (server.SaveProfile)
+                {
+                    ServerSaveList.Add(server);
+                }
+            }
+
             try
             {
                 using (var sw = new StreamWriter(_settingsPath + _settingsFile)) //open file
                 {
-                    sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented)); //write shit
+                    sw.Write(JsonConvert.SerializeObject(ServerSaveList, Formatting.Indented)); //write shit
                 }
             }
             catch (Exception e)

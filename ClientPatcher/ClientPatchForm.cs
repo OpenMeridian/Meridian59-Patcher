@@ -306,9 +306,12 @@ namespace ClientPatcher
         {
             foreach (PatcherSettings profile in _settings.Servers)
             {
-                ddlServer.Items.Add(profile.ServerName);
-                if (profile.Default)
-                    ddlServer.SelectedItem = profile.ServerName;
+                if (profile.Enabled)
+                {
+                    ddlServer.Items.Add(profile.ServerName);
+                    if (profile.Default)
+                        ddlServer.SelectedItem = profile.ServerName;
+                }
             }
         }
         #endregion
