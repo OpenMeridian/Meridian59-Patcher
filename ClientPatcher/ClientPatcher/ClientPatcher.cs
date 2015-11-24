@@ -12,6 +12,7 @@ using Shell32;
 namespace ClientPatcher
 {
     #region Event Delegates and Args
+
     //Event when we Scan a File, used to notify UI.
     public delegate void ScanFileEventHandler(object sender, ScanEventArgs e);
     public class ScanEventArgs : EventArgs
@@ -30,6 +31,7 @@ namespace ClientPatcher
             _filename = filename;
         }
     }
+
     //Event when we Start a Download, used to notify UI.
     public delegate void StartDownloadEventHandler(object sender, StartDownloadEventArgs e);
     public class StartDownloadEventArgs : EventArgs
@@ -58,6 +60,110 @@ namespace ClientPatcher
             _filesize = filesize;
         }
     }
+
+    //Event when we Start to unzip a file, used to notify UI.
+    public delegate void StartUnzipEventHandler(object sender, StartUnzipEventArgs e);
+    public class StartUnzipEventArgs : EventArgs
+    {
+        private readonly long _filesize;
+        public long Filesize
+        {
+            get
+            {
+                return _filesize;
+            }
+        }
+
+        private readonly string _filename;
+        public string Filename
+        {
+            get
+            {
+                return _filename;
+            }
+        }
+        private int _totalMembers;
+        public int TotalMembers
+        {
+            get
+            {
+                return _totalMembers;
+            }
+        }
+        public StartUnzipEventArgs(string filename, long filesize, int totalMembers)
+        {
+            _filename = filename;
+            _filesize = filesize;
+            _totalMembers = totalMembers;
+        }
+    }
+
+    //Event when we progress in an unzip operation, used to notify UI.
+    public delegate void ProgressUnzipEventHandler(object sender, ProgressUnzipEventArgs e);
+    public class ProgressUnzipEventArgs : EventArgs
+    {
+        private long _totalfiles;
+        public long TotalFiles
+        {
+            get
+            {
+                return _totalfiles;
+            }
+        }
+
+        private long _extractedfiles;
+        public long ExtractedFiles
+        {
+            get
+            {
+                return _extractedfiles;
+            }
+        }
+
+        private string _extractedFilename;
+        public string ExtractedFilename
+        {
+            get
+            {
+                return _extractedFilename;
+            }
+        }
+
+        public ProgressUnzipEventArgs(string extractedFilename, long extractedFiles, long totalFiles)
+        {
+            _extractedFilename = extractedFilename;
+            _extractedfiles = extractedFiles;
+            _totalfiles = totalFiles;
+        }
+    }
+
+    //Event when we complete an unzip operation, used to notify UI.
+    public delegate void EndUnzipEventHandler(object sender, EndUnzipEventArgs e);
+    public class EndUnzipEventArgs : EventArgs
+    {
+        private long _totalbytes;
+        public long Totalbytes
+        {
+            get
+            {
+                return _totalbytes;
+            }
+        }
+        private string _filename;
+        public string FileName
+        {
+            get
+            {
+                return _filename;
+            }
+        }
+        public EndUnzipEventArgs(string filename, long totalBytes)
+        {
+            _filename = filename;
+            _totalbytes = totalBytes;
+        }
+    }
+
     //Event when we Make progress in a Download, used to notify UI.
     public delegate void ProgressDownloadEventHandler(object sender, DownloadProgressChangedEventArgs e);
     //Event when we Complete a Download, used to notify UI.
@@ -127,6 +233,30 @@ namespace ClientPatcher
         {
            if (FailedDownload != null)
               FailedDownload(this, e);
+        }
+        public event StartUnzipEventHandler StartedUnzip;
+        protected virtual void OnStartedUnzip(StartUnzipEventArgs e)
+        {
+            if (StartedUnzip != null)
+            {
+                StartedUnzip(this, e);
+            }
+        }
+        public event ProgressUnzipEventHandler ProgressedUnzip;
+        protected virtual void OnProgressedUnzip(ProgressUnzipEventArgs e)
+        {
+            if (ProgressedUnzip != null)
+            {
+                ProgressedUnzip(this, e);
+            }
+        }
+        public event EndUnzipEventHandler EndedUnzip;
+        protected virtual void OnEndedUnzip(EndUnzipEventArgs e)
+        {
+            if (EndedUnzip != null)
+            {
+                EndedUnzip(this, e);
+            }
         }
         #endregion
 
@@ -224,6 +354,11 @@ namespace ClientPatcher
 
         public void UnZip(string zipFile, string folderPath)
         {
+            int extractedFiles = 9;
+            int totalFiles = 0;
+            //string filename = zipFile.Substring(CurrentProfile.ClientFolder.Length + 2);
+            string filename = Path.GetFileName(zipFile);
+
             if (!File.Exists(zipFile))
                 throw new FileNotFoundException();
 
@@ -234,10 +369,27 @@ namespace ClientPatcher
             Folder destinationFolder = objShell.NameSpace(folderPath);
             Folder sourceFile = objShell.NameSpace(zipFile);
 
+            totalFiles = sourceFile.Items().Count;
+
+            if (StartedUnzip != null)
+                StartedUnzip(this, new StartUnzipEventArgs(zipFile, 0, totalFiles));
+
             foreach (var file in sourceFile.Items())
             {
-                destinationFolder.CopyHere(file, 4 | 16);
+                destinationFolder.CopyHere(file, 16);
+                extractedFiles++;
+
+                // useless unless we use a different method of unzipping.  
+                // Shell32 extracts the file in one big step and never gives
+                // us the opportunity to report progress or update the form
+                // from here
+
+                //if (ProgressedUnzip != null)
+                //    ProgressedUnzip(this, new ProgressUnzipEventArgs("filenamehere", extractedFiles, totalFiles));
             }
+
+            if (EndedUnzip != null)
+                EndedUnzip(this, new EndUnzipEventArgs(zipFile, 0));
         }
 
         public abstract bool IsNewClient();
