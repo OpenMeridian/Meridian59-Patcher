@@ -17,13 +17,16 @@ namespace ClientPatcher
         public string AccountCreationUrl { get; set; } //URL to load when "Create Account" button is clicked.
         public bool Default { get; set; }          //Is this profile the default-selected at start up?
         public ClientType ClientType { get; set; } //Which client does this profile use?
+        public bool Enabled { get; set; }          // show server in available profiles
+        public bool SaveProfile { get; set; }      // save profile to settings.txt
+        public bool DeleteProfile { get; set; }    // delete profile from settings.txt
 
         public PatcherSettings()
         {
 
         }
 
-        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, string fullinstallurl, bool defaultserver = false, ClientType clientType = ClientType.Classic)
+        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, string fullinstallurl, bool defaultserver = false, ClientType clientType = ClientType.Classic, bool enabled = true, bool saveProfile = true, bool deleteProfile = false)
         {
             ServerName = servername;
             PatchInfoUrl = patchinfourl;
@@ -32,6 +35,9 @@ namespace ClientPatcher
             FullInstallUrl = fullinstallurl;
             Default = defaultserver;
             ClientType = clientType;
+            Enabled = enabled;
+            SaveProfile = saveProfile;
+            DeleteProfile = deleteProfile;
         }
 
         public string ToJson()
