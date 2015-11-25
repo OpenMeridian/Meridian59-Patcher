@@ -63,9 +63,9 @@ namespace ClientPatcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Image4 {
+        internal static System.Drawing.Bitmap Image7 {
             get {
-                object obj = ResourceManager.GetObject("Image4", resourceCulture);
+                object obj = ResourceManager.GetObject("Image7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

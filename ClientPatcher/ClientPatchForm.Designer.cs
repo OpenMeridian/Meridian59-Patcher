@@ -358,7 +358,7 @@ namespace ClientPatcher
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(708, 428);
+            this.tabLog.Size = new System.Drawing.Size(550, 368);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -450,7 +450,7 @@ namespace ClientPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::ClientPatcher.Properties.Resources.Image4;
+            this.BackgroundImage = global::ClientPatcher.Properties.Resources.Image7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(819, 551);
             this.Controls.Add(this.button1);
@@ -467,7 +467,7 @@ namespace ClientPatcher
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ClientPatchForm";
             this.Text = "OpenMeridian Client Patcher";
-            this.TransparencyKey = System.Drawing.Color.Magenta;
+            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(70)))), ((int)(((byte)(39)))));
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ClientPatchForm_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ClientPatchForm_MouseMove);
