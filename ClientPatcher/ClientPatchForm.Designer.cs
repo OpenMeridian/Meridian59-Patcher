@@ -80,7 +80,7 @@ namespace ClientPatcher
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.label1.Location = new System.Drawing.Point(582, 177);
+            this.label1.Location = new System.Drawing.Point(411, 172);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(120, 33);
             this.label1.TabIndex = 25;
@@ -88,7 +88,7 @@ namespace ClientPatcher
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(12, 136);
+            this.pbProgress.Location = new System.Drawing.Point(25, 246);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(187, 13);
             this.pbProgress.Step = 1;
@@ -98,9 +98,9 @@ namespace ClientPatcher
             // btnPlay
             // 
             this.btnPlay.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPlay.Location = new System.Drawing.Point(12, 394);
+            this.btnPlay.Location = new System.Drawing.Point(25, 458);
             this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(187, 46);
+            this.btnPlay.Size = new System.Drawing.Size(187, 31);
             this.btnPlay.TabIndex = 1;
             this.btnPlay.Text = "Play!";
             this.btnPlay.UseVisualStyleBackColor = true;
@@ -109,7 +109,7 @@ namespace ClientPatcher
             // ddlServer
             // 
             this.ddlServer.FormattingEnabled = true;
-            this.ddlServer.Location = new System.Drawing.Point(15, 57);
+            this.ddlServer.Location = new System.Drawing.Point(25, 165);
             this.ddlServer.Name = "ddlServer";
             this.ddlServer.Size = new System.Drawing.Size(187, 21);
             this.ddlServer.TabIndex = 4;
@@ -120,8 +120,8 @@ namespace ClientPatcher
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Heidelberg-Normal", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.Gold;
-            this.label2.Location = new System.Drawing.Point(30, 28);
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.Location = new System.Drawing.Point(40, 136);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(155, 26);
             this.label2.TabIndex = 6;
@@ -130,7 +130,7 @@ namespace ClientPatcher
             // btnPatch
             // 
             this.btnPatch.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPatch.Location = new System.Drawing.Point(12, 84);
+            this.btnPatch.Location = new System.Drawing.Point(25, 194);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(187, 46);
             this.btnPatch.TabIndex = 7;
@@ -140,6 +140,7 @@ namespace ClientPatcher
             // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(52)))), ((int)(((byte)(52)))));
             this.groupProfileSettings.Controls.Add(this.label4);
             this.groupProfileSettings.Controls.Add(this.txtFullInstallURL);
             this.groupProfileSettings.Controls.Add(this.btnBrowse);
@@ -154,9 +155,10 @@ namespace ClientPatcher
             this.groupProfileSettings.Controls.Add(this.txtPatchInfoURL);
             this.groupProfileSettings.Controls.Add(this.txtServerName);
             this.groupProfileSettings.Enabled = false;
+            this.groupProfileSettings.ForeColor = System.Drawing.Color.White;
             this.groupProfileSettings.Location = new System.Drawing.Point(6, 7);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(566, 341);
+            this.groupProfileSettings.Size = new System.Drawing.Size(382, 267);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
@@ -174,12 +176,12 @@ namespace ClientPatcher
             // 
             this.txtFullInstallURL.Location = new System.Drawing.Point(6, 186);
             this.txtFullInstallURL.Name = "txtFullInstallURL";
-            this.txtFullInstallURL.Size = new System.Drawing.Size(553, 20);
+            this.txtFullInstallURL.Size = new System.Drawing.Size(367, 20);
             this.txtFullInstallURL.TabIndex = 29;
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(462, 109);
+            this.btnBrowse.Location = new System.Drawing.Point(276, 110);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(97, 20);
             this.btnBrowse.TabIndex = 22;
@@ -189,9 +191,10 @@ namespace ClientPatcher
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(462, 271);
+            this.btnSave.ForeColor = System.Drawing.Color.Black;
+            this.btnSave.Location = new System.Drawing.Point(276, 224);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(97, 55);
+            this.btnSave.Size = new System.Drawing.Size(97, 29);
             this.btnSave.TabIndex = 21;
             this.btnSave.Text = "Save Changes";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -218,6 +221,7 @@ namespace ClientPatcher
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Location = new System.Drawing.Point(11, 55);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 13);
@@ -247,33 +251,34 @@ namespace ClientPatcher
             // 
             this.txtPatchBaseURL.Location = new System.Drawing.Point(6, 149);
             this.txtPatchBaseURL.Name = "txtPatchBaseURL";
-            this.txtPatchBaseURL.Size = new System.Drawing.Size(553, 20);
+            this.txtPatchBaseURL.Size = new System.Drawing.Size(367, 20);
             this.txtPatchBaseURL.TabIndex = 15;
             // 
             // txtClientFolder
             // 
             this.txtClientFolder.Location = new System.Drawing.Point(6, 110);
             this.txtClientFolder.Name = "txtClientFolder";
-            this.txtClientFolder.Size = new System.Drawing.Size(450, 20);
+            this.txtClientFolder.Size = new System.Drawing.Size(264, 20);
             this.txtClientFolder.TabIndex = 14;
             // 
             // txtPatchInfoURL
             // 
             this.txtPatchInfoURL.Location = new System.Drawing.Point(6, 71);
             this.txtPatchInfoURL.Name = "txtPatchInfoURL";
-            this.txtPatchInfoURL.Size = new System.Drawing.Size(553, 20);
+            this.txtPatchInfoURL.Size = new System.Drawing.Size(367, 20);
             this.txtPatchInfoURL.TabIndex = 13;
             // 
             // txtServerName
             // 
             this.txtServerName.Location = new System.Drawing.Point(6, 32);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(553, 20);
+            this.txtServerName.Size = new System.Drawing.Size(367, 20);
             this.txtServerName.TabIndex = 12;
             // 
             // btnCacheGen
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(584, 148);
+            this.btnCacheGen.ForeColor = System.Drawing.Color.Black;
+            this.btnCacheGen.Location = new System.Drawing.Point(413, 143);
             this.btnCacheGen.Name = "btnCacheGen";
             this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
             this.btnCacheGen.TabIndex = 24;
@@ -283,9 +288,10 @@ namespace ClientPatcher
             // 
             // txtLog
             // 
-            this.txtLog.BackColor = System.Drawing.SystemColors.Control;
-            this.txtLog.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtLog.Location = new System.Drawing.Point(6, 3);
+            this.txtLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(52)))), ((int)(((byte)(52)))));
+            this.txtLog.ForeColor = System.Drawing.Color.White;
+            this.txtLog.Location = new System.Drawing.Point(0, 0);
+            this.txtLog.Margin = new System.Windows.Forms.Padding(0);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
@@ -295,7 +301,7 @@ namespace ClientPatcher
             // 
             // pbFileProgress
             // 
-            this.pbFileProgress.Location = new System.Drawing.Point(12, 155);
+            this.pbFileProgress.Location = new System.Drawing.Point(25, 265);
             this.pbFileProgress.Name = "pbFileProgress";
             this.pbFileProgress.Size = new System.Drawing.Size(187, 13);
             this.pbFileProgress.TabIndex = 12;
@@ -317,11 +323,13 @@ namespace ClientPatcher
             this.tabControl1.Controls.Add(this.tabBrowser);
             this.tabControl1.Controls.Add(this.tabLog);
             this.tabControl1.Controls.Add(this.tabOptions);
-            this.tabControl1.Location = new System.Drawing.Point(212, 12);
+            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.Location = new System.Drawing.Point(236, 136);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(716, 506);
+            this.tabControl1.Size = new System.Drawing.Size(558, 394);
             this.tabControl1.TabIndex = 14;
             // 
             // tabBrowser
@@ -329,14 +337,16 @@ namespace ClientPatcher
             this.tabBrowser.Controls.Add(this.webControl);
             this.tabBrowser.Location = new System.Drawing.Point(4, 22);
             this.tabBrowser.Name = "tabBrowser";
-            this.tabBrowser.Size = new System.Drawing.Size(708, 480);
+            this.tabBrowser.Size = new System.Drawing.Size(550, 368);
             this.tabBrowser.TabIndex = 2;
             this.tabBrowser.Text = "News";
             // 
             // webControl
             // 
-            this.webControl.Location = new System.Drawing.Point(3, 0);
-            this.webControl.Size = new System.Drawing.Size(716, 480);
+            this.webControl.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.webControl.Location = new System.Drawing.Point(3, 6);
+            this.webControl.Margin = new System.Windows.Forms.Padding(6);
+            this.webControl.Size = new System.Drawing.Size(547, 362);
             this.webControl.Source = new System.Uri("http://openmeridian.org/forums/latestnews.php", System.UriKind.Absolute);
             this.webControl.TabIndex = 0;
             this.webControl.ShowCreatedWebView += new Awesomium.Core.ShowCreatedWebViewEventHandler(this.Awesomium_Windows_Forms_WebControl_ShowCreatedWebView);
@@ -348,13 +358,14 @@ namespace ClientPatcher
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(708, 480);
+            this.tabLog.Size = new System.Drawing.Size(708, 428);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
             // 
             // tabOptions
             // 
+            this.tabOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(52)))), ((int)(((byte)(52)))));
             this.tabOptions.Controls.Add(this.btnStartModify);
             this.tabOptions.Controls.Add(this.btnRemove);
             this.tabOptions.Controls.Add(this.label1);
@@ -362,17 +373,18 @@ namespace ClientPatcher
             this.tabOptions.Controls.Add(this.btnCacheGen);
             this.tabOptions.Controls.Add(this.groupBox1);
             this.tabOptions.Controls.Add(this.groupProfileSettings);
+            this.tabOptions.ForeColor = System.Drawing.Color.White;
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
+            this.tabOptions.Margin = new System.Windows.Forms.Padding(0);
             this.tabOptions.Name = "tabOptions";
-            this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOptions.Size = new System.Drawing.Size(708, 480);
+            this.tabOptions.Size = new System.Drawing.Size(550, 368);
             this.tabOptions.TabIndex = 1;
             this.tabOptions.Text = "Options";
-            this.tabOptions.UseVisualStyleBackColor = true;
             // 
             // btnStartModify
             // 
-            this.btnStartModify.Location = new System.Drawing.Point(584, 86);
+            this.btnStartModify.ForeColor = System.Drawing.Color.Black;
+            this.btnStartModify.Location = new System.Drawing.Point(413, 81);
             this.btnStartModify.Name = "btnStartModify";
             this.btnStartModify.Size = new System.Drawing.Size(108, 23);
             this.btnStartModify.TabIndex = 28;
@@ -382,7 +394,8 @@ namespace ClientPatcher
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(584, 57);
+            this.btnRemove.ForeColor = System.Drawing.Color.Black;
+            this.btnRemove.Location = new System.Drawing.Point(413, 52);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(108, 23);
             this.btnRemove.TabIndex = 27;
@@ -392,7 +405,8 @@ namespace ClientPatcher
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(584, 26);
+            this.btnAdd.ForeColor = System.Drawing.Color.Black;
+            this.btnAdd.Location = new System.Drawing.Point(413, 21);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(108, 23);
             this.btnAdd.TabIndex = 26;
@@ -402,9 +416,10 @@ namespace ClientPatcher
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(12, 354);
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(52)))), ((int)(((byte)(52)))));
+            this.groupBox1.Location = new System.Drawing.Point(8, 280);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(524, 111);
+            this.groupBox1.Size = new System.Drawing.Size(380, 74);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Global Settings";
@@ -412,9 +427,9 @@ namespace ClientPatcher
             // btnCreateAccount
             // 
             this.btnCreateAccount.Font = new System.Drawing.Font("Heidelberg-Normal", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCreateAccount.Location = new System.Drawing.Point(12, 342);
+            this.btnCreateAccount.Location = new System.Drawing.Point(25, 391);
             this.btnCreateAccount.Name = "btnCreateAccount";
-            this.btnCreateAccount.Size = new System.Drawing.Size(187, 46);
+            this.btnCreateAccount.Size = new System.Drawing.Size(187, 61);
             this.btnCreateAccount.TabIndex = 15;
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
@@ -423,9 +438,9 @@ namespace ClientPatcher
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(12, 446);
+            this.button1.Location = new System.Drawing.Point(25, 495);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(187, 46);
+            this.button1.Size = new System.Drawing.Size(187, 31);
             this.button1.TabIndex = 16;
             this.button1.Text = "Quit";
             this.button1.UseVisualStyleBackColor = true;
@@ -435,9 +450,9 @@ namespace ClientPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImage = global::ClientPatcher.Properties.Resources.Image4;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(963, 546);
+            this.ClientSize = new System.Drawing.Size(819, 551);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnPatch);
