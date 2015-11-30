@@ -161,7 +161,10 @@ namespace ClientPatcher
                 ServerName = servername,
                 ServerNumber = servernumber,
                 Default = isdefault,
-                ClientType = clientType
+                ClientType = clientType,
+                Enabled = true,
+                SaveProfile = true,
+                DeleteProfile = false
             };
 
             if (isdefault)
@@ -175,6 +178,7 @@ namespace ClientPatcher
             SaveSettings();
             LoadSettings();
         }
+
         public void AddProfile(PatcherSettings newprofile)
         {
             if (newprofile.Default)
@@ -185,6 +189,13 @@ namespace ClientPatcher
                 }
             }
             Servers.Add(newprofile);
+            SaveSettings();
+            LoadSettings();
+        }
+
+        public void RemoveProfileByName(string name)
+        {
+            Servers.RemoveAt(Servers.FindIndex(x => x.ServerName == name));
             SaveSettings();
             LoadSettings();
         }

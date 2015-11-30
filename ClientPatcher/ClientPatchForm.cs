@@ -80,7 +80,7 @@ namespace ClientPatcher
             }
 
             // Make sure the default is our current selection, and the data is displayed in options.
-            RefreshDdl();
+            InitDdl();
             SetPatcherProfile(ps);
         }
 
@@ -154,6 +154,7 @@ namespace ClientPatcher
                                          txtPatchInfoURL.Text, txtFullInstallURL.Text,
                                          txtServerName.Text, Convert.ToInt32(txtServerNumber.Text),
                                          cbDefaultServer.Checked, clientType);
+                    AddDdl(txtServerName.Text);
                     groupProfileSettings.Enabled = false;
                     break;
                 case ChangeType.ModProfile:
@@ -173,11 +174,8 @@ namespace ClientPatcher
             if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-                _settings.Servers.RemoveAt(selected);
-                _settings.SaveSettings();
-                _settings.LoadSettings();
-                SetPatcherProfile(_settings.GetDefault());
+                _settings.RemoveProfileByName(ddlServer.SelectedItem.ToString());
+                RemoveDdl(ddlServer.SelectedItem.ToString());
             }
         }
 
@@ -309,9 +307,29 @@ namespace ClientPatcher
         }
 
         /// <summary>
+        /// Handles adding a new patcher profile to the dropdown box.
+        /// </summary>
+        private void AddDdl(string ServerName)
+        {
+            ddlServer.Items.Add(ServerName);
+            ddlServer.SelectedItem = ServerName;
+            SetPatcherProfile(_settings.FindByName(ServerName));
+        }
+
+        /// <summary>
+        /// Handles removing a patcher profile from the dropdown box.
+        /// </summary>
+        private void RemoveDdl(string ServerName)
+        {
+            ddlServer.Items.Remove(ServerName);
+            ddlServer.SelectedItem = _settings.GetDefault().ServerName;
+            SetPatcherProfile(_settings.GetDefault());
+        }
+
+        /// <summary>
         /// Refreshes the list of profiles in the UI, selects the default.
         /// </summary>
-        private void RefreshDdl()
+        private void InitDdl()
         {
             int defaultnum = _settings.GetDefault().ServerNumber;
             foreach (PatcherSettings profile in _settings.Servers)
