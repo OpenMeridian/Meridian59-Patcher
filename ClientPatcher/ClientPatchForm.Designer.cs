@@ -33,8 +33,8 @@ namespace ClientPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.Label label1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
+            this.label1 = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
             this.ddlServer = new System.Windows.Forms.ComboBox();
@@ -44,7 +44,6 @@ namespace ClientPatcher
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtFullInstallURL = new System.Windows.Forms.TextBox();
-            this.btnCacheGen = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -56,6 +55,7 @@ namespace ClientPatcher
             this.txtClientFolder = new System.Windows.Forms.TextBox();
             this.txtPatchInfoURL = new System.Windows.Forms.TextBox();
             this.txtServerName = new System.Windows.Forms.TextBox();
+            this.btnCacheGen = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.pbFileProgress = new System.Windows.Forms.ProgressBar();
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
@@ -70,7 +70,6 @@ namespace ClientPatcher
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -78,9 +77,18 @@ namespace ClientPatcher
             this.tabOptions.SuspendLayout();
             this.SuspendLayout();
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label1.Location = new System.Drawing.Point(615, 164);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 33);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "Recreates local cache. May take a moment.";
+            // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(15, 426);
+            this.pbProgress.Location = new System.Drawing.Point(12, 265);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(187, 32);
             this.pbProgress.Step = 1;
@@ -88,7 +96,7 @@ namespace ClientPatcher
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(15, 464);
+            this.btnPlay.Location = new System.Drawing.Point(12, 416);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(187, 46);
             this.btnPlay.TabIndex = 1;
@@ -117,7 +125,7 @@ namespace ClientPatcher
             // 
             // btnPatch
             // 
-            this.btnPatch.Location = new System.Drawing.Point(15, 336);
+            this.btnPatch.Location = new System.Drawing.Point(12, 175);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(187, 46);
             this.btnPatch.TabIndex = 7;
@@ -129,7 +137,7 @@ namespace ClientPatcher
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(10, 304);
+            this.label3.Location = new System.Drawing.Point(18, 133);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(174, 29);
             this.label3.TabIndex = 8;
@@ -173,25 +181,6 @@ namespace ClientPatcher
             this.txtFullInstallURL.Name = "txtFullInstallURL";
             this.txtFullInstallURL.Size = new System.Drawing.Size(593, 20);
             this.txtFullInstallURL.TabIndex = 29;
-            // 
-            // label1
-            // 
-            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            label1.Location = new System.Drawing.Point(615, 164);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(120, 33);
-            label1.TabIndex = 25;
-            label1.Text = "Recreates local cache. May take a moment.";
-            // 
-            // btnCacheGen
-            // 
-            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
-            this.btnCacheGen.Name = "btnCacheGen";
-            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
-            this.btnCacheGen.TabIndex = 24;
-            this.btnCacheGen.Text = "Verify All Files";
-            this.btnCacheGen.UseVisualStyleBackColor = true;
-            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // btnBrowse
             // 
@@ -287,6 +276,16 @@ namespace ClientPatcher
             this.txtServerName.Size = new System.Drawing.Size(593, 20);
             this.txtServerName.TabIndex = 12;
             // 
+            // btnCacheGen
+            // 
+            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
+            this.btnCacheGen.Name = "btnCacheGen";
+            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
+            this.btnCacheGen.TabIndex = 24;
+            this.btnCacheGen.Text = "Verify All Files";
+            this.btnCacheGen.UseVisualStyleBackColor = true;
+            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
+            // 
             // txtLog
             // 
             this.txtLog.BackColor = System.Drawing.SystemColors.Control;
@@ -301,7 +300,7 @@ namespace ClientPatcher
             // 
             // pbFileProgress
             // 
-            this.pbFileProgress.Location = new System.Drawing.Point(15, 388);
+            this.pbFileProgress.Location = new System.Drawing.Point(12, 227);
             this.pbFileProgress.Name = "pbFileProgress";
             this.pbFileProgress.Size = new System.Drawing.Size(187, 32);
             this.pbFileProgress.TabIndex = 12;
@@ -363,7 +362,7 @@ namespace ClientPatcher
             // 
             this.tabOptions.Controls.Add(this.btnStartModify);
             this.tabOptions.Controls.Add(this.btnRemove);
-            this.tabOptions.Controls.Add(label1);
+            this.tabOptions.Controls.Add(this.label1);
             this.tabOptions.Controls.Add(this.btnAdd);
             this.tabOptions.Controls.Add(this.btnCacheGen);
             this.tabOptions.Controls.Add(this.groupBox1);
@@ -417,7 +416,7 @@ namespace ClientPatcher
             // 
             // btnCreateAccount
             // 
-            this.btnCreateAccount.Location = new System.Drawing.Point(15, 161);
+            this.btnCreateAccount.Location = new System.Drawing.Point(12, 468);
             this.btnCreateAccount.Name = "btnCreateAccount";
             this.btnCreateAccount.Size = new System.Drawing.Size(187, 46);
             this.btnCreateAccount.TabIndex = 15;
@@ -492,6 +491,7 @@ namespace ClientPatcher
         private Button btnCacheGen;
         private Label label4;
         private TextBox txtFullInstallURL;
+        private Label label1;
     }
 }
 
