@@ -356,7 +356,6 @@ namespace ClientPatcher
         {
             int extractedFiles = 9;
             int totalFiles = 0;
-            //string filename = zipFile.Substring(CurrentProfile.ClientFolder.Length + 2);
             string filename = Path.GetFileName(zipFile);
 
             if (!File.Exists(zipFile))
@@ -369,10 +368,13 @@ namespace ClientPatcher
             Folder destinationFolder = objShell.NameSpace(folderPath);
             Folder sourceFile = objShell.NameSpace(zipFile);
 
+            // TODO: this doesn't actually get the number of files in the archive
+            // just the number of items it sees at the top level of the archive
+            // including folders
             totalFiles = sourceFile.Items().Count;
 
             if (StartedUnzip != null)
-                StartedUnzip(this, new StartUnzipEventArgs(zipFile, 0, totalFiles));
+                StartedUnzip(this, new StartUnzipEventArgs(filename, 0, totalFiles));
 
             foreach (var file in sourceFile.Items())
             {
@@ -385,7 +387,7 @@ namespace ClientPatcher
                 // from here
 
                 //if (ProgressedUnzip != null)
-                //    ProgressedUnzip(this, new ProgressUnzipEventArgs("filenamehere", extractedFiles, totalFiles));
+                //    ProgressedUnzip(this, new ProgressUnzipEventArgs("extractedfilenamehere", extractedFiles, totalFiles));
             }
 
             if (EndedUnzip != null)
