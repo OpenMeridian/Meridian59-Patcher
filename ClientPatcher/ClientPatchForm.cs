@@ -24,8 +24,8 @@ namespace ClientPatcher
         SettingsManager _settings;
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
-
         public bool showFileNames = false;
+        private bool _creatingAccount;
 
         public ClientPatchForm()
         {
@@ -39,11 +39,9 @@ namespace ClientPatcher
 
             btnPlay.Enabled = false;
 
-            // Load current settings.txt. TODO: Refresh() seems to do all 3 of these things.
+            // Load user's profiles, refresh from web if necessary.
             _settings = new SettingsManager();
-            _settings.LoadSettings();
             _settings.Refresh();
-            _settings.SaveSettings();
 
             // Get the default profile settings.
             PatcherSettings ps = _settings.GetDefault();
@@ -100,9 +98,15 @@ namespace ClientPatcher
         {
             LaunchProfile();
         }
+
         private void btnPatch_Click(object sender, EventArgs e)
         {
             PatchProfile();
+        }
+
+        private void btnCreateAccount_Click(object sender, EventArgs e)
+        {
+            CreateAccount();
         }
         #endregion
 
@@ -155,11 +159,9 @@ namespace ClientPatcher
                                          txtServerName.Text, Convert.ToInt32(txtServerNumber.Text),
                                          cbDefaultServer.Checked, clientType);
                     AddDdl(txtServerName.Text);
-                    groupProfileSettings.Enabled = false;
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
-                    groupProfileSettings.Enabled = false;
                     break;
             }
             groupProfileSettings.Enabled = false;
@@ -206,16 +208,6 @@ namespace ClientPatcher
 
         #region Profiles
         /// <summary>
-        /// Handles user changing which profile is selected.
-        /// </summary>
-        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            //lblStatus.Text = ddlServer.SelectedItem.ToString();
-            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
-            SetPatcherProfile(selected);
-        }
-
-        /// <summary>
         /// Selected a new profile.
         /// </summary>
         private void SetPatcherProfile(PatcherSettings profile)
@@ -223,6 +215,13 @@ namespace ClientPatcher
             // Don't set to null profile.
             if (profile == null)
                 return;
+
+            // In case we clicked out from Add Profile.
+            if (_changetype == ChangeType.AddProfile)
+            {
+                _changetype = ChangeType.None;
+                groupProfileSettings.Enabled = false;
+            }
 
             _patcher.CurrentProfile = profile;
             txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n",
@@ -234,7 +233,7 @@ namespace ClientPatcher
             _creatingAccount = false;
 
             //if (groupProfileSettings.Enabled != true) return;
-            groupProfileSettings.Enabled = false;
+            //groupProfileSettings.Enabled = false;
             // Set the Options tab data fields to the current selection.
             SetProfileDataFields(profile);
 
@@ -305,25 +304,17 @@ namespace ClientPatcher
             _settings.SaveSettings();
             _settings.LoadSettings();
         }
+        #endregion
 
+        #region DropDownList
         /// <summary>
-        /// Handles adding a new patcher profile to the dropdown box.
+        /// Handles user changing which profile is selected.
         /// </summary>
-        private void AddDdl(string ServerName)
+        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            ddlServer.Items.Add(ServerName);
-            ddlServer.SelectedItem = ServerName;
-            SetPatcherProfile(_settings.FindByName(ServerName));
-        }
-
-        /// <summary>
-        /// Handles removing a patcher profile from the dropdown box.
-        /// </summary>
-        private void RemoveDdl(string ServerName)
-        {
-            ddlServer.Items.Remove(ServerName);
-            ddlServer.SelectedItem = _settings.GetDefault().ServerName;
-            SetPatcherProfile(_settings.GetDefault());
+            //lblStatus.Text = ddlServer.SelectedItem.ToString();
+            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
+            SetPatcherProfile(selected);
         }
 
         /// <summary>
@@ -345,11 +336,32 @@ namespace ClientPatcher
                 }
             }
         }
+
+        /// <summary>
+        /// Handles adding a new patcher profile to the dropdown box.
+        /// </summary>
+        private void AddDdl(string ServerName)
+        {
+            ddlServer.Items.Add(ServerName);
+            ddlServer.SelectedItem = ServerName;
+            SetPatcherProfile(_settings.FindByName(ServerName));
+        }
+
+        /// <summary>
+        /// Handles removing a patcher profile from the dropdown box.
+        /// </summary>
+        private void RemoveDdl(string ServerName)
+        {
+            ddlServer.Items.Remove(ServerName);
+            ddlServer.SelectedItem = _settings.GetDefault().ServerName;
+            SetPatcherProfile(_settings.GetDefault());
+        }
         #endregion
 
         #region Scanning
         private void PatchProfile()
         {
+            tabControl1.SelectTab(1);
             CheckMeridianRunning();
             StartScan();
         }
@@ -413,17 +425,19 @@ namespace ClientPatcher
         }
         #endregion
 
-        #region extracting
+        #region Extracting
         private void Patcher_StartedUnzip(object sender, StartUnzipEventArgs e)
         {
             TxtLogAppendText(String.Format("Decompressing Archive: {0}\r\n", e.Filename));
         }
+
         private void Patcher_ProgressedUnzip(object sender, ProgressUnzipEventArgs e)
         {
             // this is worthless, the current unzip code unzips the whole thing then gets to here
             // leaving the event handler in case we need it in the future
             // TxtLogAppendText(String.Format("Extracted File: {0}\r\n", e.ExtractedFilename));
         }
+
         private void Patcher_EndedUnzip(object sender, EndUnzipEventArgs e)
         {
             TxtLogAppendText(String.Format("Decompressed {0}\r\n", e.FileName));
@@ -544,9 +558,7 @@ namespace ClientPatcher
         #endregion
 
         #region AccountCreation
-        private bool _creatingAccount;
-
-        private void btnCreateAccount_Click(object sender, EventArgs e)
+        private void CreateAccount()
         {
             if (!_creatingAccount)
             {
@@ -572,6 +584,7 @@ namespace ClientPatcher
         }
         #endregion
 
+        #region WebControl
         private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, DocumentReadyEventArgs e)
         {
             //TxtLogAppendText(webControl.HTML);
@@ -587,6 +600,7 @@ namespace ClientPatcher
                 return;
             webControl.Source = e.TargetURL;
         }
+        #endregion
 
         #region Util
         void CheckForShortcut()

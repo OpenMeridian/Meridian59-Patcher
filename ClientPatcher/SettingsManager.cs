@@ -12,15 +12,16 @@ namespace ClientPatcher
 {
     class SettingsManager
     {
-        //Where to download latest setting from
+        // Where to download latest setting from.
         private const string SettingsUrl = "http://ww1.openmeridian.org/settings.php";
         private const string UserAgentString = "Mozilla/4.0 (compatible; .NET CLR 4.0.;) OpenMeridianPatcher v1.4";
 
 
-        private readonly string _settingsPath; //Path to JSON file settings.txt
+        private readonly string _settingsPath; // Path to JSON file settings.txt.
         private readonly string _settingsFile;
 
-        public List<PatcherSettings> Servers { get; set; } //Loaded from settings.txt, or generated on first run and then saved.
+        // Loaded from settings.txt, or generated on first run and then saved.
+        public List<PatcherSettings> Servers { get; set; }
 
         public SettingsManager()
         {
@@ -28,14 +29,20 @@ namespace ClientPatcher
             _settingsFile = "\\settings.txt";
         }
 
+        #region SettingsList
+        /// <summary>
+        /// Load settings.txt, also check web settings.
+        /// </summary>
         public void Refresh()
         {
             LoadSettings();
             MergeWebSettings(GetNewSettings());
             SaveSettings();
         }
+
         /// <summary>
-        /// Downloads the list of available servers from the open meridian web server using JSON encoded PatcherSettings objects.
+        /// Downloads the list of available servers from the open meridian
+        /// web server using JSON encoded PatcherSettings objects.
         /// </summary>
         public List<PatcherSettings> GetNewSettings()
         {
@@ -43,7 +50,7 @@ namespace ClientPatcher
             {
                 var myClient = new WebClient();
                 myClient.Headers.Add("user-agent", UserAgentString);
-                //Download the settings from the web, store them in a list.
+                // Download the settings from the web, store them in a list.
                 var webSettingsList =
                     JsonConvert.DeserializeObject<List<PatcherSettings>>(myClient.DownloadString(SettingsUrl)); 
                 return webSettingsList;
@@ -52,53 +59,53 @@ namespace ClientPatcher
             catch (Exception e)
             {
                 throw new InvalidOperationException("Unable to download settings from server." + e);
-            }         
+            }
         }
+
         /// <summary>
         /// Merges a list of PatcherSettings objects with the currently loaded settings
         /// </summary>
         /// <param name="webSettingsList">List of PatcherSetting objects to merge</param>
-        public void MergeWebSettings(List<PatcherSettings> webSettingsList )
+        public void MergeWebSettings(List<PatcherSettings> webSettingsList)
         {
             if (Servers == null)
             {
                 Servers = webSettingsList;
                 return;
             }
-            foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
+
+            // Loop through loaded settings from settings.txt.
+            foreach (PatcherSettings webProfile in webSettingsList)
             {
-                //find the matching local profile by Guid
+                // Find the matching local profile by Guid.
                 PatcherSettings localProfile = Servers.FirstOrDefault(i => i.Guid == webProfile.Guid);
-                //if a local match, update, else, add a new local profile
+
+                // If a local match, update, else, add a new local profile.
                 if (localProfile != null)
                 {
                     if (!webProfile.DeleteProfile)
                     {
-                        //dont update all fields on purpose. user retains control of paths, which client to use.
-                        localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
-                        localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
-                        localProfile.ServerName = webProfile.ServerName;
-                        localProfile.ServerNumber = webProfile.ServerNumber;
-                        localProfile.FullInstallUrl = webProfile.FullInstallUrl;
-                        localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
-                        localProfile.Enabled = webProfile.Enabled;
+                        // Don't update all fields on purpose. user retains control of paths, which client to use.
+                        UpdateProfile(localProfile, webProfile);
                     }
                     else
                     {
-                        // remove from the list of servers (will also not be in saved list)
+                        // Remove from the list of servers (will also not be in saved list).
                         Servers.Remove(localProfile);
                     }
                 }
                 else
                 {
-                    // don't add a server that is supposed to be deleted
+                    // Don't add a server that is supposed to be deleted.
                     if (!webProfile.DeleteProfile)
                         Servers.Add(webProfile);
                 }
             }
         }
+
         /// <summary>
-        /// Load the settings.txt file and use json deserialization to create an array of PatcherSettings objects.
+        /// Load the settings.txt file and use json deserialization
+        /// to create an array of PatcherSettings objects.
         /// Otherwise, download the settings from the web.
         /// </summary>
         public void LoadSettings()
@@ -117,6 +124,7 @@ namespace ClientPatcher
             }
             Servers.Sort((x, y) => x.ServerNumber.CompareTo(y.ServerNumber));
         }
+
         /// <summary>
         /// JSON Serialize our PatcherSettings and write them to settings.txt
         /// </summary>
@@ -146,8 +154,12 @@ namespace ClientPatcher
             }
             
         }
+        #endregion
 
-        //used when adding from form
+        #region Profiles
+        /// <summary>
+        /// Add a profile to the Servers list, used by the add form.
+        /// </summary>
         public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl,
                                string fullinstallurl, string servername, int servernumber,
                                bool isdefault = false, ClientType clientType = ClientType.Classic)
@@ -179,6 +191,9 @@ namespace ClientPatcher
             LoadSettings();
         }
 
+        /// <summary>
+        /// Add a profile to the Servers list.
+        /// </summary>
         public void AddProfile(PatcherSettings newprofile)
         {
             if (newprofile.Default)
@@ -193,6 +208,9 @@ namespace ClientPatcher
             LoadSettings();
         }
 
+        /// <summary>
+        /// Removes a profile from the Servers list by server name.
+        /// </summary>
         public void RemoveProfileByName(string name)
         {
             Servers.RemoveAt(Servers.FindIndex(x => x.ServerName == name));
@@ -200,6 +218,23 @@ namespace ClientPatcher
             LoadSettings();
         }
 
+        /// <summary>
+        /// Update a local profile data fields from a web profile.
+        /// Does not update path or Guid.
+        /// </summary>
+        private void UpdateProfile(PatcherSettings localProfile, PatcherSettings webProfile)
+        {
+            localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
+            localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
+            localProfile.ServerName = webProfile.ServerName;
+            localProfile.ServerNumber = webProfile.ServerNumber;
+            localProfile.FullInstallUrl = webProfile.FullInstallUrl;
+            localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+            localProfile.Enabled = webProfile.Enabled;
+        }
+        #endregion
+
+        #region Find
         public PatcherSettings FindByName(string name)
         {
             return Servers.Find(x => x.ServerName == name);
@@ -225,7 +260,9 @@ namespace ClientPatcher
 
             return ps;
         }
+        #endregion
 
+        #region Util
         /// <summary>
         /// Sets proper NTFS permissions for the patcher to operate
         /// </summary>
@@ -245,8 +282,8 @@ namespace ClientPatcher
                 
                 throw new Exception("Unable to GrantAccess()" + e);
             }
-            
-        }
 
+        }
+        #endregion
     }
 }
