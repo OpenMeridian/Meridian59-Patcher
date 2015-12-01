@@ -101,6 +101,30 @@ namespace ClientPatcher
                         Servers.Add(webProfile);
                 }
             }
+
+            // Handle the transition from older profiles with null Guid to newer ones as
+            // the old profiles will be deleted. If a user is still updating the old
+            // profile, it is likely it will be the default. Search profiles and if a
+            // null Guid is found in a profile matching a newer entry, and the old
+            // profile is the default, put the old profile's path in the new profile
+            // and set that one to default.
+            foreach (PatcherSettings server in Servers)
+            {
+                if (server.Guid == null && server.Default)
+                {
+                    foreach (PatcherSettings serverMatch in Servers)
+                    {
+                        // Same PatchInfoUrl, one null Guid and one not. Use the path from
+                        // the old profile, set the new one to default.
+                        if (serverMatch.Guid != null && server.PatchInfoUrl == serverMatch.PatchInfoUrl)
+                        {
+                            serverMatch.ClientFolder = server.ClientFolder;
+                            server.Default = false;
+                            serverMatch.Default = true;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -231,6 +255,8 @@ namespace ClientPatcher
             localProfile.FullInstallUrl = webProfile.FullInstallUrl;
             localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
             localProfile.Enabled = webProfile.Enabled;
+            localProfile.SaveProfile = webProfile.SaveProfile;
+            localProfile.DeleteProfile = webProfile.DeleteProfile;
         }
         #endregion
 
