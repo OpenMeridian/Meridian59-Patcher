@@ -8,6 +8,7 @@ namespace ClientPatcher
             : base()
         {
             ServerName = "103 - Open Meridian Official (Classic)";
+            ServerNumber = 103;
             PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
             FullInstallUrl = "http://ww1.openmeridian.org/103/Meridian59.Client.Classic.zip";
             ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";

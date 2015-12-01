@@ -24,8 +24,8 @@ namespace ClientPatcher
         SettingsManager _settings;
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
-
         public bool showFileNames = false;
+        private bool _creatingAccount;
 
         public ClientPatchForm()
         {
@@ -39,11 +39,9 @@ namespace ClientPatcher
 
             btnPlay.Enabled = false;
 
-            // Load current settings.txt. TODO: Refresh() seems to do all 3 of these things.
+            // Load user's profiles, refresh from web if necessary.
             _settings = new SettingsManager();
-            _settings.LoadSettings();
             _settings.Refresh();
-            _settings.SaveSettings();
 
             // Get the default profile settings.
             PatcherSettings ps = _settings.GetDefault();
@@ -80,7 +78,7 @@ namespace ClientPatcher
             }
 
             // Make sure the default is our current selection, and the data is displayed in options.
-            RefreshDdl();
+            InitDdl();
             SetPatcherProfile(ps);
         }
 
@@ -100,9 +98,15 @@ namespace ClientPatcher
         {
             LaunchProfile();
         }
+
         private void btnPatch_Click(object sender, EventArgs e)
         {
             PatchProfile();
+        }
+
+        private void btnCreateAccount_Click(object sender, EventArgs e)
+        {
+            CreateAccount();
         }
         #endregion
 
@@ -134,6 +138,7 @@ namespace ClientPatcher
             txtPatchInfoURL.Text = ps.PatchInfoUrl;
             txtFullInstallURL.Text = ps.FullInstallUrl;
             txtServerName.Text = ps.ServerName;
+            txtServerNumber.Text = ps.ServerNumber.ToString();
             cbDefaultServer.Checked = ps.Default;
 
             _changetype = ChangeType.ModProfile;
@@ -149,12 +154,14 @@ namespace ClientPatcher
                 case ChangeType.AddProfile:
                     ClientType clientType = ClientType.Classic;
 
-                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtFullInstallURL.Text, txtServerName.Text, cbDefaultServer.Checked, clientType);
-                    groupProfileSettings.Enabled = false;
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text,
+                                         txtPatchInfoURL.Text, txtFullInstallURL.Text,
+                                         txtServerName.Text, Convert.ToInt32(txtServerNumber.Text),
+                                         cbDefaultServer.Checked, clientType);
+                    AddDdl(txtServerName.Text);
                     break;
                 case ChangeType.ModProfile:
                     ModProfile();
-                    groupProfileSettings.Enabled = false;
                     break;
             }
             groupProfileSettings.Enabled = false;
@@ -166,13 +173,11 @@ namespace ClientPatcher
         /// </summary>
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-                _settings.Servers.RemoveAt(selected);
-                _settings.SaveSettings();
-                _settings.LoadSettings();
-                SetPatcherProfile(_settings.GetDefault());
+                _settings.RemoveProfileByName(ddlServer.SelectedItem.ToString());
+                RemoveDdl(ddlServer.SelectedItem.ToString());
             }
         }
 
@@ -203,16 +208,6 @@ namespace ClientPatcher
 
         #region Profiles
         /// <summary>
-        /// Handles user changing which profile is selected.
-        /// </summary>
-        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            //lblStatus.Text = ddlServer.SelectedItem.ToString();
-            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
-            SetPatcherProfile(selected);
-        }
-
-        /// <summary>
         /// Selected a new profile.
         /// </summary>
         private void SetPatcherProfile(PatcherSettings profile)
@@ -221,8 +216,16 @@ namespace ClientPatcher
             if (profile == null)
                 return;
 
+            // In case we clicked out from Add Profile.
+            if (_changetype == ChangeType.AddProfile)
+            {
+                _changetype = ChangeType.None;
+                groupProfileSettings.Enabled = false;
+            }
+
             _patcher.CurrentProfile = profile;
-            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", profile.ServerName, profile.ClientFolder);
+            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n",
+                            profile.ServerName, profile.ClientFolder);
             btnPlay.Enabled = false;
 
             // Set create account text.
@@ -230,7 +233,7 @@ namespace ClientPatcher
             _creatingAccount = false;
 
             //if (groupProfileSettings.Enabled != true) return;
-            groupProfileSettings.Enabled = false;
+            //groupProfileSettings.Enabled = false;
             // Set the Options tab data fields to the current selection.
             SetProfileDataFields(profile);
 
@@ -269,6 +272,7 @@ namespace ClientPatcher
                 txtPatchInfoURL.Text = "";
                 txtFullInstallURL.Text = "";
                 txtServerName.Text = "";
+                txtServerNumber.Text = "0";
             }
             else
             {
@@ -277,6 +281,7 @@ namespace ClientPatcher
                 txtPatchInfoURL.Text = profile.PatchInfoUrl;
                 txtFullInstallURL.Text = profile.FullInstallUrl;
                 txtServerName.Text = profile.ServerName;
+                txtServerNumber.Text = profile.ServerNumber.ToString();
                 cbDefaultServer.Checked = profile.Default;
             }
         }
@@ -292,33 +297,71 @@ namespace ClientPatcher
             _settings.Servers[selected].PatchInfoUrl = txtPatchInfoURL.Text;
             _settings.Servers[selected].FullInstallUrl = txtFullInstallURL.Text;
             _settings.Servers[selected].ServerName = txtServerName.Text;
+            _settings.Servers[selected].ServerNumber = Convert.ToInt32(txtServerNumber.Text);
             _settings.Servers[selected].Default = cbDefaultServer.Checked;
 
             _changetype = ChangeType.None;
             _settings.SaveSettings();
             _settings.LoadSettings();
         }
+        #endregion
+
+        #region DropDownList
+        /// <summary>
+        /// Handles user changing which profile is selected.
+        /// </summary>
+        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            //lblStatus.Text = ddlServer.SelectedItem.ToString();
+            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
+            SetPatcherProfile(selected);
+        }
 
         /// <summary>
-        /// Refreshes the profile selection to default.
+        /// Refreshes the list of profiles in the UI, selects the default.
         /// </summary>
-        private void RefreshDdl()
+        private void InitDdl()
         {
+            int defaultnum = _settings.GetDefault().ServerNumber;
             foreach (PatcherSettings profile in _settings.Servers)
             {
                 if (profile.Enabled)
                 {
-                    ddlServer.Items.Add(profile.ServerName);
+                    if (profile.ServerNumber == defaultnum)
+                        ddlServer.Items.Insert(0, profile.ServerName);
+                    else
+                        ddlServer.Items.Add(profile.ServerName);
                     if (profile.Default)
                         ddlServer.SelectedItem = profile.ServerName;
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles adding a new patcher profile to the dropdown box.
+        /// </summary>
+        private void AddDdl(string ServerName)
+        {
+            ddlServer.Items.Add(ServerName);
+            ddlServer.SelectedItem = ServerName;
+            SetPatcherProfile(_settings.FindByName(ServerName));
+        }
+
+        /// <summary>
+        /// Handles removing a patcher profile from the dropdown box.
+        /// </summary>
+        private void RemoveDdl(string ServerName)
+        {
+            ddlServer.Items.Remove(ServerName);
+            ddlServer.SelectedItem = _settings.GetDefault().ServerName;
+            SetPatcherProfile(_settings.GetDefault());
         }
         #endregion
 
         #region Scanning
         private void PatchProfile()
         {
+            tabControl1.SelectTab(1);
             CheckMeridianRunning();
             StartScan();
         }
@@ -382,17 +425,19 @@ namespace ClientPatcher
         }
         #endregion
 
-        #region extracting
+        #region Extracting
         private void Patcher_StartedUnzip(object sender, StartUnzipEventArgs e)
         {
             TxtLogAppendText(String.Format("Decompressing Archive: {0}\r\n", e.Filename));
         }
+
         private void Patcher_ProgressedUnzip(object sender, ProgressUnzipEventArgs e)
         {
             // this is worthless, the current unzip code unzips the whole thing then gets to here
             // leaving the event handler in case we need it in the future
             // TxtLogAppendText(String.Format("Extracted File: {0}\r\n", e.ExtractedFilename));
         }
+
         private void Patcher_EndedUnzip(object sender, EndUnzipEventArgs e)
         {
             TxtLogAppendText(String.Format("Decompressed {0}\r\n", e.FileName));
@@ -513,9 +558,7 @@ namespace ClientPatcher
         #endregion
 
         #region AccountCreation
-        private bool _creatingAccount;
-
-        private void btnCreateAccount_Click(object sender, EventArgs e)
+        private void CreateAccount()
         {
             if (!_creatingAccount)
             {
@@ -537,10 +580,11 @@ namespace ClientPatcher
         /// </summary>
         private void SetCreateAccountText(PatcherSettings ps)
         {
-            btnCreateAccount.Text = String.Format("Create Account for {0}", ps.ServerName);
+            btnCreateAccount.Text = String.Format("Create Account for {0}", ps.ServerNumber);
         }
         #endregion
 
+        #region WebControl
         private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, DocumentReadyEventArgs e)
         {
             //TxtLogAppendText(webControl.HTML);
@@ -556,6 +600,7 @@ namespace ClientPatcher
                 return;
             webControl.Source = e.TargetURL;
         }
+        #endregion
 
         #region Util
         void CheckForShortcut()

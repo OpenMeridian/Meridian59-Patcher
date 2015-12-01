@@ -9,6 +9,7 @@ namespace ClientPatcher
     public class PatcherSettings
     {
         public string ServerName { get; set; }     //What do we call this profile?
+        public int ServerNumber { get; set; }      // Server number.
         public string PatchInfoUrl { get; set; }   //Where is the file containing md5 hashes to compare?
         public string ClientFolder { get; set; }   //Where is the local copy of the client?
         public string PatchBaseUrl { get; set; }   //Where to download individual files?
@@ -26,9 +27,13 @@ namespace ClientPatcher
 
         }
 
-        public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, string fullinstallurl, bool defaultserver = false, ClientType clientType = ClientType.Classic, bool enabled = true, bool saveProfile = true, bool deleteProfile = false)
+        public PatcherSettings(string servername, int servernumber, string patchinfourl,
+                               string clientfolder, string patchbaseurl, string fullinstallurl,
+                               bool defaultserver = false, ClientType clientType = ClientType.Classic,
+                               bool enabled = true, bool saveProfile = true, bool deleteProfile = false)
         {
             ServerName = servername;
+            ServerNumber = servernumber;
             PatchInfoUrl = patchinfourl;
             ClientFolder = clientfolder;
             PatchBaseUrl = patchbaseurl;
