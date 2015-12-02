@@ -31,6 +31,7 @@ namespace ClientPatcher
         // point for handling borderless window dragging
         Point LastClick;
 
+        #region Form
         public ClientPatchForm()
         {
             InitializeComponent();
@@ -51,26 +52,8 @@ namespace ClientPatcher
             PatcherSettings ps = _settings.GetDefault();
 
             // Load the type of client patcher we need for scanning the default profile.
-            ClientType ct = ps.ClientType;
-            switch (ct)
-            {
-                case ClientType.Classic:
-                    _patcher = new ClassicClientPatcher(ps);
-                    break;
-                case ClientType.DotNet:
-                    _patcher = new OgreClientPatcher(ps);
-                    break;
-            }
-
-            // Add event handlers.
-            _patcher.FileScanned += Patcher_FileScanned;
-            _patcher.StartedDownload += Patcher_StartedDownload;
-            _patcher.ProgressedDownload += Patcher_ProgressedDownload;
-            _patcher.EndedDownload += Patcher_EndedDownload;
-            _patcher.FailedDownload += Patcher_FailedDownload;
-            _patcher.StartedUnzip += Patcher_StartedUnzip;
-            _patcher.ProgressedUnzip += Patcher_ProgressedUnzip;
-            _patcher.EndedUnzip += Patcher_EndedUnzip;
+            // Adds event handlers.
+            _patcher = GetClientPatcher(ps, _patcher);
 
             // Set the create account button to display "create account" text.
             SetCreateAccountText(_patcher.CurrentProfile);
@@ -86,16 +69,20 @@ namespace ClientPatcher
             SetPatcherProfile(ps);
         }
 
-        /// <summary>
-        /// Launches the Meridian client for the selected profile.
-        /// </summary>
-        private void LaunchProfile()
+        private void ClientPatchForm_MouseDown(object sender, MouseEventArgs e)
         {
-            _patcher.Launch();
-            Application.Exit();
-            webControl.Dispose();
-            Environment.Exit(1);
+            LastClick = e.Location;
         }
+
+        private void ClientPatchForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                this.Left += e.X - LastClick.X;
+                this.Top += e.Y - LastClick.Y;
+            }
+        }
+        #endregion
 
         #region MainButtonClicked
         private void btnPlay_Click(object sender, EventArgs e)
@@ -105,13 +92,19 @@ namespace ClientPatcher
 
         private void btnPatch_Click(object sender, EventArgs e)
         {
-            pbProgress.Visible = true;
             PatchProfile();
         }
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {
             CreateAccount();
+        }
+
+        private void btnQuit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+            webControl.Dispose();
+            Environment.Exit(1);
         }
         #endregion
 
@@ -228,7 +221,11 @@ namespace ClientPatcher
                 groupProfileSettings.Enabled = false;
             }
 
-            _patcher.CurrentProfile = profile;
+            if (_patcher.CurrentProfile.ClientType != profile.ClientType)
+                _patcher = GetClientPatcher(profile, _patcher);
+            else
+                _patcher.CurrentProfile = profile;
+
             txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n",
                             profile.ServerName, profile.ClientFolder);
             btnPlay.Enabled = false;
@@ -241,28 +238,6 @@ namespace ClientPatcher
             //groupProfileSettings.Enabled = false;
             // Set the Options tab data fields to the current selection.
             SetProfileDataFields(profile);
-
-            // Load the type of client patcher we need for scanning the default profile.
-            ClientType ct = profile.ClientType;
-            switch (ct)
-            {
-                case ClientType.Classic:
-                    _patcher = new ClassicClientPatcher(profile);
-                    break;
-                case ClientType.DotNet:
-                    _patcher = new OgreClientPatcher(profile);
-                    break;
-            }
-
-            // Add event handlers.
-            _patcher.FileScanned += Patcher_FileScanned;
-            _patcher.StartedDownload += Patcher_StartedDownload;
-            _patcher.ProgressedDownload += Patcher_ProgressedDownload;
-            _patcher.EndedDownload += Patcher_EndedDownload;
-            _patcher.FailedDownload += Patcher_FailedDownload;
-            _patcher.StartedUnzip += Patcher_StartedUnzip;
-            _patcher.ProgressedUnzip += Patcher_ProgressedUnzip;
-            _patcher.EndedUnzip += Patcher_EndedUnzip;
         }
 
         /// <summary>
@@ -308,6 +283,17 @@ namespace ClientPatcher
             _changetype = ChangeType.None;
             _settings.SaveSettings();
             _settings.LoadSettings();
+        }
+
+        /// <summary>
+        /// Launches the Meridian client for the selected profile.
+        /// </summary>
+        private void LaunchProfile()
+        {
+            _patcher.Launch();
+            Application.Exit();
+            webControl.Dispose();
+            Environment.Exit(1);
         }
         #endregion
 
@@ -363,6 +349,58 @@ namespace ClientPatcher
         }
         #endregion
 
+        #region ClientPatcher
+        /// <summary>
+        /// Load the type of client patcher we need for scanning the given profile.
+        /// </summary>
+        private ClientPatcher GetClientPatcher(PatcherSettings ps, ClientPatcher oldPatcher)
+        {
+            // If a patcher already exists, remove the event handlers.
+            if (oldPatcher != null)
+            {
+                oldPatcher.FileScanned -= Patcher_FileScanned;
+                oldPatcher.StartedDownload -= Patcher_StartedDownload;
+                oldPatcher.ProgressedDownload -= Patcher_ProgressedDownload;
+                oldPatcher.EndedDownload -= Patcher_EndedDownload;
+                oldPatcher.FailedDownload -= Patcher_FailedDownload;
+                oldPatcher.StartedUnzip -= Patcher_StartedUnzip;
+                oldPatcher.ProgressedUnzip -= Patcher_ProgressedUnzip;
+                oldPatcher.EndedUnzip -= Patcher_EndedUnzip;
+                oldPatcher.FailedDependency -= Patcher_FailedDependency;
+            }
+
+            ClientPatcher newPatcher;
+            if (ps.ClientType == ClientType.DotNet)
+                newPatcher = new OgreClientPatcher(ps);
+            else
+                newPatcher = new ClassicClientPatcher(ps);
+
+            // Add event handlers.
+            newPatcher.FileScanned += Patcher_FileScanned;
+            newPatcher.StartedDownload += Patcher_StartedDownload;
+            newPatcher.ProgressedDownload += Patcher_ProgressedDownload;
+            newPatcher.EndedDownload += Patcher_EndedDownload;
+            newPatcher.FailedDownload += Patcher_FailedDownload;
+            newPatcher.StartedUnzip += Patcher_StartedUnzip;
+            newPatcher.ProgressedUnzip += Patcher_ProgressedUnzip;
+            newPatcher.EndedUnzip += Patcher_EndedUnzip;
+            newPatcher.FailedDependency += Patcher_FailedDependency;
+
+            return newPatcher;
+        }
+
+        /// <summary>
+        /// Event called if user tries to patch/download a client without having
+        /// the required dependencies.
+        /// </summary>
+        private void Patcher_FailedDependency(object sender, FailedDependencyEventArgs e)
+        {
+            TxtLogAppendText(String.Format("Error: {0}\r\n", e.Msg));
+            SetWebAddress(e.Uri);
+            MessageBox.Show(e.Msg, "Failed Dependency", MessageBoxButtons.OK);
+        }
+        #endregion
+
         #region Scanning
         private void PatchProfile()
         {
@@ -380,6 +418,11 @@ namespace ClientPatcher
 
         private void StartScan()
         {
+            // Check if user meets the required dependencies for this client.
+            if (!_patcher.CheckDependencies())
+                return;
+
+            pbProgress.Visible = true;
             btnPatch.Enabled = false;
             ddlServer.Enabled = false;
 
@@ -482,7 +525,7 @@ namespace ClientPatcher
             pbFileProgress.Value = pbFileProgress.Maximum;
             if (_patcher.DownloadFileFailed)
             {
-               TxtLogAppendText("Patching failed!\r\n");
+                TxtLogAppendText("Patching failed!\r\n");
                 TxtLogAppendText("Ensure the Meridian 59 client is closed while patching and if the problem persists, raise an issue at openmeridian.org/forums/\r\n");
             }
             else
@@ -605,6 +648,15 @@ namespace ClientPatcher
                 return;
             webControl.Source = e.TargetURL;
         }
+
+        /// <summary>
+        /// Set the address of the browser to the given string.
+        /// </summary>
+        public void SetWebAddress(string uri)
+        {
+            tabControl1.SelectTab(0);
+            webControl.Source = new Uri(uri);
+        }
         #endregion
 
         #region Util
@@ -648,26 +700,5 @@ namespace ClientPatcher
             }
         }
         #endregion
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-            webControl.Dispose();
-            Environment.Exit(1);
-        }
-
-        private void ClientPatchForm_MouseDown(object sender, MouseEventArgs e)
-        {
-            LastClick = e.Location;
-        }
-
-        private void ClientPatchForm_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                this.Left += e.X - LastClick.X;
-                this.Top += e.Y - LastClick.Y;
-            }
-        }
     }
 }

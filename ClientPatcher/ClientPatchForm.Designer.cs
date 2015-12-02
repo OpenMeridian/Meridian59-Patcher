@@ -71,7 +71,7 @@ namespace ClientPatcher
             this.btnAdd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnQuit = new System.Windows.Forms.Button();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -455,16 +455,16 @@ namespace ClientPatcher
             this.btnCreateAccount.UseVisualStyleBackColor = true;
             this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
-            // button1
+            // btnQuit
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(12, 495);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(187, 31);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Quit";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnQuit.Location = new System.Drawing.Point(12, 495);
+            this.btnQuit.Name = "btnQuit";
+            this.btnQuit.Size = new System.Drawing.Size(187, 31);
+            this.btnQuit.TabIndex = 16;
+            this.btnQuit.Text = "Quit";
+            this.btnQuit.UseVisualStyleBackColor = true;
+            this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
             // 
             // ClientPatchForm
             // 
@@ -473,7 +473,7 @@ namespace ClientPatcher
             this.BackgroundImage = global::ClientPatcher.Properties.Resources.Image7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(963, 527);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnQuit);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.tabControl1);
@@ -542,7 +542,7 @@ namespace ClientPatcher
         private Label label1;
         private TextBox txtServerNumber;
         private Label label9;
-        private Button button1;
+        private Button btnQuit;
     }
 }
 
