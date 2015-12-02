@@ -99,8 +99,8 @@ namespace ClientPatcher
             // 
             // btnPlay
             // 
-            this.btnPlay.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPlay.Location = new System.Drawing.Point(12, 416);
+            this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlay.Location = new System.Drawing.Point(12, 389);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(187, 46);
             this.btnPlay.TabIndex = 1;
@@ -121,7 +121,7 @@ namespace ClientPatcher
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Heidelberg-Normal", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(10, 9);
             this.label2.Name = "label2";
@@ -131,7 +131,7 @@ namespace ClientPatcher
             // 
             // btnPatch
             // 
-            this.btnPatch.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPatch.Location = new System.Drawing.Point(12, 175);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(187, 46);
@@ -139,16 +139,6 @@ namespace ClientPatcher
             this.btnPatch.Text = "Update/Install";
             this.btnPatch.UseVisualStyleBackColor = true;
             this.btnPatch.Click += new System.EventHandler(this.btnPatch_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(18, 133);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(174, 29);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Update/Install";
             // 
             // groupProfileSettings
             // 
@@ -307,8 +297,8 @@ namespace ClientPatcher
             // 
             // btnCacheGen
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
             this.btnCacheGen.ForeColor = System.Drawing.Color.Black;
+            this.btnCacheGen.Location = new System.Drawing.Point(617, 135);
             this.btnCacheGen.Name = "btnCacheGen";
             this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
             this.btnCacheGen.TabIndex = 24;
@@ -456,8 +446,8 @@ namespace ClientPatcher
             // 
             // btnCreateAccount
             // 
-            this.btnCreateAccount.Font = new System.Drawing.Font("Heidelberg-Normal", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCreateAccount.Location = new System.Drawing.Point(12, 468);
+            this.btnCreateAccount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreateAccount.Location = new System.Drawing.Point(12, 443);
             this.btnCreateAccount.Name = "btnCreateAccount";
             this.btnCreateAccount.Size = new System.Drawing.Size(187, 46);
             this.btnCreateAccount.TabIndex = 15;
@@ -467,8 +457,8 @@ namespace ClientPatcher
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("Heidelberg-Normal", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(25, 495);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(12, 495);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(187, 31);
             this.button1.TabIndex = 16;
