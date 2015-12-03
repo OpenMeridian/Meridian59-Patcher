@@ -170,6 +170,20 @@ namespace ClientPatcher
     public delegate void EndDownloadEventHandler(object sender, AsyncCompletedEventArgs e);
     public delegate void FailDownloadHandler(object sender, AsyncCompletedEventArgs e);
 
+    // Event when we don't meet a dependency, notify UI to download it.
+    public delegate void FailedClientDependency(object sender, FailedDependencyEventArgs e);
+    public class FailedDependencyEventArgs : EventArgs
+    {
+        private string _uri;
+        private string _msg;
+        public string Uri { get { return _uri; } }
+        public string Msg { get { return _msg; } }
+        public FailedDependencyEventArgs(string uri, string msg)
+        {
+            _uri = uri;
+            _msg = msg;
+        }
+    }
     #endregion
 
     abstract class ClientPatcher
@@ -199,7 +213,33 @@ namespace ClientPatcher
 
         public PatcherSettings CurrentProfile { get; set; }
 
+        #region Constructors
+        public ClientPatcher()
+        {
+            _downloadFileFailed = false;
+            downloadFiles = new List<ManagedFile>();
+            MyWebClient = new WebClient();
+            MyWebClient.Headers.Add("user-agent", UserAgentString);
+        }
+        public ClientPatcher(PatcherSettings settings)
+        {
+            _downloadFileFailed = false;
+            downloadFiles = new List<ManagedFile>();
+            MyWebClient = new WebClient();
+            MyWebClient.Headers.Add("user-agent", UserAgentString);
+            CurrentProfile = settings;
+        }
+        #endregion
+
         #region Events
+        // Event when we start a download, but don't meet
+        // client dependencies. Notify UI.
+        public event FailedClientDependency FailedDependency;
+        protected virtual void OnFailedDependency(FailedDependencyEventArgs e)
+        {
+            if (FailedDependency != null)
+                FailedDependency(this, e);
+        }
         //Event when we Scan a File, used to notify UI.
         public event ScanFileEventHandler FileScanned;
         protected virtual void OnFileScan(ScanEventArgs e)
@@ -258,100 +298,14 @@ namespace ClientPatcher
                 EndedUnzip(this, e);
             }
         }
+
+        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            OnProgressedDownload(e);
+        }
         #endregion
 
-        public ClientPatcher()
-        {
-            _downloadFileFailed = false;
-            downloadFiles = new List<ManagedFile>();
-            MyWebClient = new WebClient();
-            MyWebClient.Headers.Add("user-agent", UserAgentString);
-        }
-        public ClientPatcher(PatcherSettings settings)
-        {
-            _downloadFileFailed = false;
-            downloadFiles = new List<ManagedFile>();
-            MyWebClient = new WebClient();
-            MyWebClient.Headers.Add("user-agent", UserAgentString);
-            CurrentProfile = settings;
-        }
-        public int DownloadPatchDefinition()
-        {
-            var wc = new WebClient();
-            wc.Headers.Add("user-agent", UserAgentString);
-            try
-            {
-                _patchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoUrl);
-                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(_patchInfoJason);
-                return 1;
-            }
-            catch (WebException e)
-            {
-                Console.WriteLine("WebException Handler: {0}", e);
-                return 0;
-            }
-        }
-
-        private void TestPath(string path)
-        {
-            if (!Directory.Exists(Path.GetDirectoryName(path)))
-            {
-                try
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                }
-                catch (Exception e)
-                {
-                    throw new IOException("Unable to TestPath()" + e);
-                }
-            }
-        }
-
-
-        public bool HasCache()
-        {
-            return File.Exists(CurrentProfile.ClientFolder + CacheFile);
-        }
-
-        private void CreateFolderStructure()
-        {
-            TestPath(CurrentProfile.ClientFolder + "\\");
-        }
-
-        public void CreateNewClient()
-        {
-            CreateFolderStructure();
-
-            ManagedFile file = PatchFiles.Find(x => x.Filename == "latest.zip");
-
-            // if we can get a latest.zip use it, if not, just patch as normal
-            if (file != null)
-            {
-                DownloadOneFileAsync(file);
-
-
-                while (!_continueAsync)
-                {
-                    //Wait for the download to finish
-                    Thread.Sleep(10);
-                }
-
-                if (!_downloadFileFailed)
-                {
-                    UnZip(CurrentProfile.ClientFolder + file.Basepath + file.Filename, CurrentProfile.ClientFolder + file.Basepath);
-                    File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
-                }
-                else
-                {
-                    // don't fail the patch if we couldn't get the full installation zip, just patch them
-                    _downloadFileFailed = false;
-
-                    if (File.Exists(CurrentProfile.ClientFolder + file.Basepath + file.Filename))
-                        File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
-                }
-            }
-        }
-
+        #region ZipFile
         public void UnZip(string zipFile, string folderPath)
         {
             int extractedFiles = 9;
@@ -393,7 +347,9 @@ namespace ClientPatcher
             if (EndedUnzip != null)
                 EndedUnzip(this, new EndUnzipEventArgs(zipFile, 0));
         }
+        #endregion
 
+        #region Client
         public abstract bool IsNewClient();
         public abstract void Launch();
 
@@ -405,7 +361,53 @@ namespace ClientPatcher
             CompareFiles();
         }
 
+        private void CreateFolderStructure()
+        {
+            TestPath(CurrentProfile.ClientFolder + "\\");
+        }
+
+        public void CreateNewClient()
+        {
+            CreateFolderStructure();
+
+            ManagedFile file = PatchFiles.Find(x => x.Filename == "latest.zip");
+
+            // if we can get a latest.zip use it, if not, just patch as normal
+            if (file != null)
+            {
+                DownloadOneFileAsync(file);
+
+
+                while (!_continueAsync)
+                {
+                    //Wait for the download to finish
+                    Thread.Sleep(10);
+                }
+
+                if (!_downloadFileFailed)
+                {
+                    UnZip(CurrentProfile.ClientFolder + file.Basepath + file.Filename, CurrentProfile.ClientFolder + file.Basepath);
+                    File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                }
+                else
+                {
+                    // don't fail the patch if we couldn't get the full installation zip, just patch them
+                    _downloadFileFailed = false;
+
+                    if (File.Exists(CurrentProfile.ClientFolder + file.Basepath + file.Filename))
+                        File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                }
+            }
+        }
+        #endregion
+
+        #region Cache
         public abstract void GenerateCache();
+
+        public bool HasCache()
+        {
+            return File.Exists(CurrentProfile.ClientFolder + CacheFile);
+        }
 
         public void SavePatchAsCache()
         {
@@ -454,7 +456,28 @@ namespace ClientPatcher
 
             }
         }
+        #endregion
 
+        #region Download Patch
+        public int DownloadPatchDefinition()
+        {
+            var wc = new WebClient();
+            wc.Headers.Add("user-agent", UserAgentString);
+            try
+            {
+                _patchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoUrl);
+                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(_patchInfoJason);
+                return 1;
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("WebException Handler: {0}", e);
+                return 0;
+            }
+        }
+        #endregion
+
+        #region Download Files
         public void CompareFiles()
         {
             foreach (ManagedFile patchFile in PatchFiles)
@@ -572,9 +595,27 @@ namespace ClientPatcher
            }
             _continueAsync = true;
         }
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        #endregion
+
+        #region Util
+        private void TestPath(string path)
         {
-            OnProgressedDownload(e);
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                }
+                catch (Exception e)
+                {
+                    throw new IOException("Unable to TestPath()" + e);
+                }
+            }
         }
+        #endregion
+
+        #region Dependencies
+        public abstract bool CheckDependencies();
+        #endregion
     }
 }

@@ -248,6 +248,7 @@ namespace ClientPatcher
         /// </summary>
         private void UpdateProfile(PatcherSettings localProfile, PatcherSettings webProfile)
         {
+            localProfile.ClientType = webProfile.ClientType;
             localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
             localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
             localProfile.ServerName = webProfile.ServerName;
