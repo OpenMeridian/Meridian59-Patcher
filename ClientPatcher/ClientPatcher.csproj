@@ -195,7 +195,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Image7.png" />
+    <None Include="Resources\Image8.png" />
     <Content Include="skull-28-256.ico" />
   </ItemGroup>
   <ItemGroup>
