@@ -57,14 +57,15 @@ namespace PatchListGenerator
         #endregion
 
         /// <summary>
-        /// Pulls out the file path and name, adds Beasepath(relative) metadata
+        /// Pulls out the file path and name, adds Basepath(relative) metadata
         /// </summary>
         public void ParseFilePath()
         {
             Path = System.IO.Path.GetDirectoryName(Filepath);
             Filename = System.IO.Path.GetFileName(Filepath);
-            if (Filepath.Contains("resource"))
-                Basepath = "\\resource\\";
+            // I don't think this part is needed any longer.
+            //if (Filepath.Contains("resource"))
+              //  Basepath = "\\resource\\";
         }
 
         /// <summary>
