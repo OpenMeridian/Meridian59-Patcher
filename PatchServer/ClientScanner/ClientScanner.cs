@@ -18,12 +18,15 @@ namespace PatchListGenerator
     /// </summary>
     public class ClientScanner
     {
+        #region Properties
         private List<string> ScanFiles { get; set; }
         public List<string> ScanExtensions { get; set; }
         public List<ManagedFile> Files { get; set; }
         public List<ManagedFile> SpecialFiles { get; set; }
         public virtual string BasePath { get; set; }
-        
+        #endregion
+
+        #region Constructors
         public ClientScanner()
         {
         }
@@ -32,16 +35,12 @@ namespace PatchListGenerator
         {
             BasePath = basepath;
         }
+        #endregion
 
+        #region File Handling/Searching
         public virtual void AddExtensions() { }
         public virtual void AddSpecialFiles() { }
-        public void ScannerSetup(string basepath)
-        {
-            AddExtensions();
-            AddSpecialFiles();
-            ScanFiles = new List<string>();
-            ScanFiles.AddRange(DirSearch(basepath));
-        }
+
         /// <summary>
         /// Recursive function to get all files in a directory and sub-directories
         /// </summary>
@@ -68,9 +67,20 @@ namespace PatchListGenerator
 
             return files;
         }
+        #endregion
+
+        #region Scanning
+        public void ScannerSetup(string basepath)
+        {
+            AddExtensions();
+            AddSpecialFiles();
+            ScanFiles = new List<string>();
+            ScanFiles.AddRange(DirSearch(basepath));
+        }
 
         /// <summary>
-        /// Scans each file in the ScanFiles property of the ClientScanner Class, ManagedFile objects are added to the Files property of the ClientScanner Class
+        /// Scans each file in the ScanFiles property of the ClientScanner Class,
+        /// ManagedFile objects are added to the Files property of the ClientScanner Class
         /// </summary>
         public void ScanSource()
         {
@@ -84,23 +94,28 @@ namespace PatchListGenerator
                     file.Basepath = fileName.Substring(BasePath.Length, (fileName.Length - BasePath.Length - Path.GetFileName(fileName).Length));
                     file.ComputeHash();
                     file.FillLength();
+                    file.Version = ManagedFileVersion.VersionNum;
                     Files.Add(file);
                 }
             }
         }
+        #endregion
 
+        #region JSON
         public string ToJson()
         {
             if (SpecialFiles != null)
                 Files.AddRange(SpecialFiles);
             return JsonConvert.SerializeObject(Files, Formatting.Indented);
         }
+        #endregion
 
+        #region Util
         public void Report()
         {
             foreach (ManagedFile file in Files)
                 Console.WriteLine(file.ToString());
         }
-
+        #endregion
     }
 }
