@@ -357,8 +357,8 @@ namespace ClientPatcher
         {
             if (IsNewClient())
                 CreateNewClient();
-
-            CompareFiles();
+            else
+                CompareFiles();
         }
 
         private void CreateFolderStructure()
@@ -376,7 +376,6 @@ namespace ClientPatcher
             if (file != null)
             {
                 DownloadOneFileAsync(file);
-
 
                 while (!_continueAsync)
                 {
