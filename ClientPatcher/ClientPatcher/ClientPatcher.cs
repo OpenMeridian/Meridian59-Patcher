@@ -357,8 +357,8 @@ namespace ClientPatcher
         {
             if (IsNewClient())
                 CreateNewClient();
-
-            CompareFiles();
+            else
+                CompareFiles();
         }
 
         private void CreateFolderStructure()
@@ -376,7 +376,6 @@ namespace ClientPatcher
             if (file != null)
             {
                 DownloadOneFileAsync(file);
-
 
                 while (!_continueAsync)
                 {
@@ -414,7 +413,7 @@ namespace ClientPatcher
             string fullpath = CurrentProfile.ClientFolder;
             using (var sw = new StreamWriter(fullpath + CacheFile))
             {
-                sw.Write(JsonConvert.SerializeObject(PatchFiles));
+                sw.Write(JsonConvert.SerializeObject(PatchFiles, Formatting.Indented));
             }
         }
 
@@ -434,7 +433,13 @@ namespace ClientPatcher
 
         }
 
-        public void CompareCache()
+        /// <summary>
+        /// Compares the patchinfo file data to the data in cache.txt. Files not marked for
+        /// download in the patchinfo file are ignored. If there is a version mismatch in
+        /// cache.txt, CompareCache returns false. Otherwise if there is a hash mismatch,
+        /// the file will be marked for download.
+        /// </summary>
+        public bool CompareCache()
         {
             foreach (ManagedFile patchFile in PatchFiles)
             {
@@ -448,13 +453,25 @@ namespace ClientPatcher
                 if (currentFile == null) //file not in cache, download it.
                     downloadFiles.Add(patchFile);
                 else
+                {
+                    if (patchFile.Version != currentFile.Version)
+                    {
+                        // Version number doesn't match so cache.txt is invalid.
+                        // Clear our lists and return false here so the files get
+                        // scanned again.
+                        cacheFiles.Clear();
+                        downloadFiles.Clear();
+                        return false;
+                    }
+
                     if (patchFile.MyHash != currentFile.MyHash)
                     {
                         currentFile.Length = patchFile.Length;
                         downloadFiles.Add(currentFile);
                     }
-
+                }
             }
+            return true;
         }
         #endregion
 

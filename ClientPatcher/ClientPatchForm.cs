@@ -442,21 +442,39 @@ namespace ClientPatcher
                     TxtLogAppendText("Using local cache....\r\n");
                     showFileNames = false;
                     _patcher.LoadCache();
-                    _patcher.CompareCache();
-                    PostScan();
+                    if (_patcher.CompareCache())
+                    {
+                        PostScan();
+                    }
+                    else
+                    {
+                        TxtLogAppendText("Local cache invalid!\r\n");
+                        ScanLocalFiles();
+                    }
                 }
                 else
                 {
-                    TxtLogAppendText("Scanning local files...\r\n");
                     showFileNames = true;
-                    bgScanWorker.RunWorkerAsync(_patcher);
+                    ScanLocalFiles();
                 }
             }
             else
             {
                 txtLog.AppendText("ERROR: Unable to download Patch Information! Please try again later or raise an issue at openmeridian.org/forums/\r\n");
                 btnPatch.Enabled = true;
+                pbProgress.Visible = false;
+                pbFileProgress.Visible = false;
+                ddlServer.Enabled = true;
             }
+        }
+
+        /// <summary>
+        /// Scans local files, called if not using local cache.
+        /// </summary>
+        private void ScanLocalFiles()
+        {
+            TxtLogAppendText("Scanning local files...\r\n");
+            bgScanWorker.RunWorkerAsync(_patcher);
         }
 
         private void PostScan()

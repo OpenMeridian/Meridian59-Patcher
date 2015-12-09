@@ -26,7 +26,7 @@ namespace ClientPatcher
         #region Client
         public override bool IsNewClient()
         {
-            return !File.Exists(CurrentProfile.ClientFolder + "\\x86\\Meridian59.Ogre.Client.exe");
+            return !Directory.Exists(CurrentProfile.ClientFolder + "\\x86\\");
         }
 
         public override void Launch()

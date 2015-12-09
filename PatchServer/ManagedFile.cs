@@ -7,7 +7,18 @@ using Newtonsoft.Json;
 namespace PatchListGenerator
 {
     /// <summary>
-    /// ManagedFiles are files that can compute their own hash, parse their own path, and read other metadata from themselves, such as size.
+    /// Increment version whenever the format of ManagedFile is changed.
+    /// Necessary so that format changes don't require all users to download
+    /// the entire client again due to having an incorrect cache.txt.
+    /// </summary>
+    public enum ManagedFileVersion
+    {
+        VersionNum = 1
+    }
+
+    /// <summary>
+    /// ManagedFiles are files that can compute their own hash, parse their own path,
+    /// and read other metadata from themselves, such as size.
     /// </summary>
     public class ManagedFile
     {
@@ -21,7 +32,9 @@ namespace PatchListGenerator
         public string MyHash { get; set; } //what is the hash of this file
         public long Length;
         public bool Download = true;
+        public ManagedFileVersion Version;
 
+        #region Constructors
         public ManagedFile()
         {
         }
@@ -36,20 +49,25 @@ namespace PatchListGenerator
         {
             Filepath = filepath;
             Download = autoDownload;
+            Version = ManagedFileVersion.VersionNum;
             ParseFilePath();
             ComputeHash();
             FillLength();
         }
+        #endregion
+
         /// <summary>
-        /// Pulls out the file path and name, adds Beasepath(relative) metadata
+        /// Pulls out the file path and name, adds Basepath(relative) metadata
         /// </summary>
         public void ParseFilePath()
         {
             Path = System.IO.Path.GetDirectoryName(Filepath);
             Filename = System.IO.Path.GetFileName(Filepath);
-            if (Filepath.Contains("resource"))
-                Basepath = "\\resource\\";
+            // I don't think this part is needed any longer.
+            //if (Filepath.Contains("resource"))
+              //  Basepath = "\\resource\\";
         }
+
         /// <summary>
         /// We compute an MD5 hash of ourselves using the firs 64 bytes of the file and metadata and save it in the MyHash property
         /// </summary>
@@ -82,6 +100,7 @@ namespace PatchListGenerator
 
             MyHash = ByteArrayToString(md5.ComputeHash(hashableBytes));
         }
+
         /// <summary>
         /// Utility function
         /// </summary>
@@ -102,6 +121,7 @@ namespace PatchListGenerator
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
+
         /// <summary>
         /// Fill file-length metadata
         /// </summary>
