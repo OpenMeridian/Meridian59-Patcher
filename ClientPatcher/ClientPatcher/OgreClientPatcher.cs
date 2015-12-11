@@ -64,10 +64,9 @@ namespace ClientPatcher
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
                 RegistryView.Registry32).OpenSubKey(NETRegistryKey))
             {
-                int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
                 // If a user has a .NET version lower than 4.5, send them to download it.
                 // Release key value from https://msdn.microsoft.com/en-us/library/hh925568%28v=vs.110%29.aspx#net_d
-                if (releaseKey < 378675)
+                if (ndpKey == null || Convert.ToInt32(ndpKey.GetValue("Release")) < 378675)
                 {
                     OnFailedDependency(new FailedDependencyEventArgs(NETDownloadUri, NETDownloadMsg));
 
@@ -85,10 +84,9 @@ namespace ClientPatcher
                 RegistryView.Registry32).OpenSubKey(VSRedistKey))
             {
                 // null key converts to 0.
-                int releaseKey = Convert.ToInt32(ndpKey.GetValue("Installed"));
-                // If a user does not have VS 2013 C++ redist installed, download them.
-                if (releaseKey == 0)
+                if (ndpKey == null || Convert.ToInt32(ndpKey.GetValue("Installed")) == 0)
                 {
+                    // If a user does not have VS 2013 C++ redist installed, download them.
                     OnFailedDependency(new FailedDependencyEventArgs(VSRedistDlUri, VSRedistDlMsg));
 
                     return false;
