@@ -702,18 +702,28 @@ namespace ClientPatcher
 
         private void CheckMeridianRunning()
         {
-            Process[] processlist = Process.GetProcessesByName("meridian");
+            Process[] processlist = Process.GetProcesses();
             if (processlist.Length != 0)
             {
                 foreach (Process process in processlist)
                 {
-                    if (process.Modules[0].FileName.ToLower() ==
-                        (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
+                    try
                     {
-                        process.Kill();
-                        MessageBox.Show("Warning! You must have Meridian closed in order to patch successfully!",
-                            "Meridian Already Running!!", MessageBoxButtons.OK);
+                        if ((process.Modules[0].FileName.ToLower().Contains("meridian.exe") ||
+                            process.Modules[0].FileName.ToLower().Contains("meridian59.ogre.client.exe")) &&
+                            process.Modules[0].FileName.ToLower().Contains(_patcher.CurrentProfile.ClientFolder.ToLower()))
+                        {
+                                process.Kill();
+                                MessageBox.Show("Warning! You must have Meridian closed in order to patch successfully!",
+                                    "Meridian Already Running!!", MessageBoxButtons.OK);
+                        }
                     }
+                    catch (Exception)
+                    {
+                        //some processes dont allow us to access their path information, so this needs to be here to suppress things
+                        //there's probably a good way to handle this catch() but i dont know what it is.
+                    }
+                    
                 }
             }
         }
