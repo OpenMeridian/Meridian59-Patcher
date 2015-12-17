@@ -24,7 +24,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkProfile />
-    <PublishUrl>C:\xampp\htdocs\</PublishUrl>
+    <PublishUrl>C:\xampp\htdocs\patcher\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
