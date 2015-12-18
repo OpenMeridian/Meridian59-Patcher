@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using Awesomium.Core;
-using Awesomium.Windows.Forms;
 using PatchListGenerator;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 using System.Drawing;
@@ -57,6 +55,8 @@ namespace ClientPatcher
 
             // Set the create account button to display "create account" text.
             SetCreateAccountText(_patcher.CurrentProfile);
+
+            SetWebAddress("http://openmeridian.org/forums/latestnews.php");
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -628,13 +628,13 @@ namespace ClientPatcher
         {
             if (!_creatingAccount)
             {
-                webControl.Source = new Uri(_patcher.CurrentProfile.AccountCreationUrl);
+                SetWebAddress(_patcher.CurrentProfile.AccountCreationUrl);
                 btnCreateAccount.Text = "Back to News";
                 _creatingAccount = true;
             }
             else
             {
-                webControl.Source = new Uri("http://openmeridian.org/forums/latestnews.php");
+                SetWebAddress("http://openmeridian.org/forums/latestnews.php");
                 SetCreateAccountText(_patcher.CurrentProfile);
                 _creatingAccount = false;
             }
@@ -651,29 +651,13 @@ namespace ClientPatcher
         #endregion
 
         #region WebControl
-        private void Awesomium_Windows_Forms_WebControl_DocumentReady(object sender, DocumentReadyEventArgs e)
-        {
-            //TxtLogAppendText(webControl.HTML);
-        }
-
-        private void Awesomium_Windows_Forms_WebControl_ShowCreatedWebView(object sender, ShowCreatedWebViewEventArgs e)
-        {
-            WebControl webControl = sender as WebControl;
-            if (webControl == null)
-                return;
-
-            if (!webControl.IsLive)
-                return;
-            webControl.Source = e.TargetURL;
-        }
-
         /// <summary>
         /// Set the address of the browser to the given string.
         /// </summary>
         public void SetWebAddress(string uri)
         {
             tabControl1.SelectTab(0);
-            webControl.Source = new Uri(uri);
+            webControl.Navigate(uri);
         }
         #endregion
 

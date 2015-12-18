@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
-using Awesomium.Windows.Forms;
 
 namespace ClientPatcher
 {
@@ -32,7 +31,6 @@ namespace ClientPatcher
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
             this.label1 = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
@@ -63,7 +61,6 @@ namespace ClientPatcher
             this.bgDownloadWorker = new System.ComponentModel.BackgroundWorker();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabBrowser = new System.Windows.Forms.TabPage();
-            this.webControl = new Awesomium.Windows.Forms.WebControl(this.components);
             this.tabLog = new System.Windows.Forms.TabPage();
             this.tabOptions = new System.Windows.Forms.TabPage();
             this.btnStartModify = new System.Windows.Forms.Button();
@@ -72,6 +69,7 @@ namespace ClientPatcher
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCreateAccount = new System.Windows.Forms.Button();
             this.btnQuit = new System.Windows.Forms.Button();
+            this.webControl = new System.Windows.Forms.WebBrowser();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
@@ -361,17 +359,6 @@ namespace ClientPatcher
             this.tabBrowser.TabIndex = 2;
             this.tabBrowser.Text = "News";
             // 
-            // webControl
-            // 
-            this.webControl.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.webControl.Location = new System.Drawing.Point(3, 6);
-            this.webControl.Margin = new System.Windows.Forms.Padding(6);
-            this.webControl.Size = new System.Drawing.Size(545, 439);
-            this.webControl.Source = new System.Uri("http://openmeridian.org/forums/latestnews.php", System.UriKind.Absolute);
-            this.webControl.TabIndex = 0;
-            this.webControl.ShowCreatedWebView += new Awesomium.Core.ShowCreatedWebViewEventHandler(this.Awesomium_Windows_Forms_WebControl_ShowCreatedWebView);
-            this.webControl.DocumentReady += new Awesomium.Core.DocumentReadyEventHandler(this.Awesomium_Windows_Forms_WebControl_DocumentReady);
-            // 
             // tabLog
             // 
             this.tabLog.Controls.Add(this.txtLog);
@@ -466,6 +453,15 @@ namespace ClientPatcher
             this.btnQuit.UseVisualStyleBackColor = true;
             this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
             // 
+            // webControl
+            // 
+            this.webControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webControl.Location = new System.Drawing.Point(0, 0);
+            this.webControl.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webControl.Name = "webControl";
+            this.webControl.Size = new System.Drawing.Size(548, 445);
+            this.webControl.TabIndex = 0;
+            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -530,7 +526,6 @@ namespace ClientPatcher
         private TabPage tabLog;
         private TabPage tabOptions;
         private TabPage tabBrowser;
-        private WebControl webControl;
         private Button btnCreateAccount;
         private GroupBox groupBox1;
         private Button btnStartModify;
@@ -543,6 +538,7 @@ namespace ClientPatcher
         private TextBox txtServerNumber;
         private Label label9;
         private Button btnQuit;
+        private WebBrowser webControl;
     }
 }
 
