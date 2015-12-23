@@ -464,7 +464,8 @@ namespace ClientPatcher
                         return false;
                     }
 
-                    if (patchFile.MyHash != currentFile.MyHash)
+                    if (patchFile.MyHash != currentFile.MyHash
+                        || patchFile.Length != currentFile.Length)
                     {
                         currentFile.Length = patchFile.Length;
                         downloadFiles.Add(currentFile);
@@ -508,7 +509,8 @@ namespace ClientPatcher
                 var localFile = new ManagedFile(fullpath);
                 localFile.Basepath = patchFile.Basepath;
                 localFile.ComputeHash();
-                if (patchFile.MyHash != localFile.MyHash)
+                if (patchFile.MyHash != localFile.MyHash
+                    || patchFile.Length != localFile.Length)
                 {
                     downloadFiles.Add(localFile);
                     localFile.Length = patchFile.Length;

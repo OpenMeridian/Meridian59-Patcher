@@ -13,7 +13,7 @@ namespace PatchListGenerator
     /// </summary>
     public enum ManagedFileVersion
     {
-        VersionNum = 1
+        VersionNum = 2
     }
 
     /// <summary>
@@ -69,11 +69,13 @@ namespace PatchListGenerator
         }
 
         /// <summary>
-        /// We compute an MD5 hash of ourselves using the firs 64 bytes of the file and metadata and save it in the MyHash property
+        /// We compute an MD5 hash of ourselves using the first 1024 bytes of
+        /// the file and metadata and save it in the MyHash property
         /// </summary>
         public void ComputeHash()
         {
-            //We're going to read the first 64 bytes or so of the file, salt it with the filename, and coompute a MD5 hash.
+            // We're going to read the first 1024 bytes or so of the file,
+            // salt it with the filename, and coompute a MD5 hash.
 
             MD5 md5 = MD5.Create();
             if (!File.Exists(Filepath))
@@ -83,8 +85,10 @@ namespace PatchListGenerator
             }
 
             FileStream stream = File.OpenRead(Filepath);
-            long numBytesToRead = 64;
-            if (stream.Length < 64) //Make sure we dont read past the end of a file smaller than 64 bytes
+            long numBytesToRead = 1024;
+
+            // Make sure we dont read past the end of a file smaller than 1024 bytes.
+            if (stream.Length < 1024)
             {
                 numBytesToRead = stream.Length;
             }
