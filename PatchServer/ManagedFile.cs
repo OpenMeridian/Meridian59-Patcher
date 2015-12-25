@@ -43,6 +43,7 @@ namespace PatchListGenerator
         {
             Filepath = filepath;
             ParseFilePath();
+            FillLength();
         }
 
         public ManagedFile(string filepath,bool autoDownload)
