@@ -42,8 +42,8 @@ namespace PatchListGenerator
         {
             SpecialFiles = new List<ManagedFile>();
 
-            if (File.Exists(BasePath + "latest.zip"))
-                SpecialFiles.Add(new ManagedFile(BasePath + "latest.zip", false));
+            if (File.Exists(BasePath + "\\" + "latest.zip"))
+                SpecialFiles.Add(new ManagedFile(BasePath + "\\" + "latest.zip", false));
         }
         #endregion
     }
