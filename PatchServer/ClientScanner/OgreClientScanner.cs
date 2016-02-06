@@ -34,7 +34,7 @@ namespace PatchListGenerator
         {
            ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".bsf",
                 ".font", ".ttf", ".md", ".png", ".material", ".hlsl", ".dds", ".mesh", ".xml", ".pu", ".compositor",
-                ".imageset", ".layout", ".looknfeel", ".scheme" };
+                ".imageset", ".layout", ".looknfeel", ".scheme", ".ogg" };
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace PatchListGenerator
         /// </summary>
         public override void AddExtensions()
         {
-            ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf" };
+            ScanExtensions = new List<string> { ".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf", ".ogg" };
         }
 
         /// <summary>
