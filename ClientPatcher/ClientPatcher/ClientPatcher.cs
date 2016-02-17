@@ -395,7 +395,12 @@ namespace ClientPatcher
 
                     if (File.Exists(CurrentProfile.ClientFolder + file.Basepath + file.Filename))
                         File.Delete(CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                    CompareFiles();
                 }
+            }
+            else
+            {
+                CompareFiles();
             }
         }
         #endregion
