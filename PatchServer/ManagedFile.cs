@@ -13,7 +13,7 @@ namespace PatchListGenerator
     /// </summary>
     public enum ManagedFileVersion
     {
-        VersionNum = 2
+        VersionNum = 3
     }
 
     /// <summary>
@@ -70,14 +70,11 @@ namespace PatchListGenerator
         }
 
         /// <summary>
-        /// We compute an MD5 hash of ourselves using the first 1024 bytes of
-        /// the file and metadata and save it in the MyHash property
+        /// We compute an MD5 hash of ourselves using the full
+        /// contents of the file and save it in the MyHash property
         /// </summary>
         public void ComputeHash()
         {
-            // We're going to read the first 1024 bytes or so of the file,
-            // salt it with the filename, and coompute a MD5 hash.
-
             MD5 md5 = MD5.Create();
             if (!File.Exists(Filepath))
             {
@@ -85,25 +82,15 @@ namespace PatchListGenerator
                 return;
             }
 
-            FileStream stream = File.OpenRead(Filepath);
-            long numBytesToRead = 1024;
+            // Create filestream.
+            FileStream stream = new FileStream(Filepath, FileMode.Open, FileAccess.Read);
 
-            // Make sure we dont read past the end of a file smaller than 1024 bytes.
-            if (stream.Length < 1024)
-            {
-                numBytesToRead = stream.Length;
-            }
-            
-            byte[] fileBytes = new byte[numBytesToRead];
-            byte[] fileNameBytes = Encoding.ASCII.GetBytes(Filename);
-            byte[] hashableBytes = new byte[numBytesToRead + Filename.Length];
+            // Compute md5, store in MyHash.
+            MyHash = ByteArrayToString(md5.ComputeHash(stream));
 
-            stream.Read(fileBytes, 0, (int) numBytesToRead);
-
-            Buffer.BlockCopy(fileBytes,0,hashableBytes,0,fileBytes.Length);
-            Buffer.BlockCopy(fileNameBytes,0,hashableBytes,fileBytes.Length, fileNameBytes.Length);
-
-            MyHash = ByteArrayToString(md5.ComputeHash(hashableBytes));
+            // Close filestream.
+            stream.Close();
+            stream.Dispose();
         }
 
         /// <summary>
